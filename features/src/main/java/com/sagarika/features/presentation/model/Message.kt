@@ -1,6 +1,6 @@
-package com.sagarika.data.dto
+package com.sagarika.features.presentation.model
 
-data class MessageEntity(
+data class Message(
     val affenpinscher: List<Any>,
     val african: List<Any>,
     val airedale: List<Any>,

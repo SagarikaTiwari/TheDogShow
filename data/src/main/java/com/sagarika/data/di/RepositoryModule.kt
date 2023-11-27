@@ -37,6 +37,5 @@ class RepositoryModule {
         dogRepositoryImpl: DogRepositoryImpl
     ): DogRepository = dogRepositoryImpl
 
-    @Provides
-    fun providesIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
+
 }

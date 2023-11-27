@@ -1,0 +1,111 @@
+<resources>
+    <string-array name="breed_list">
+        <item> affenpinscher   </item>
+        <item> african   </item>
+        <item> airedale   </item>
+        <item> akita   </item>
+        <item> appenzeller   </item>
+        <item> australian </item>
+        <item> bakharwal </item>
+        <item> basenji   </item>
+        <item> beagle   </item>
+        <item> bluetick   </item>
+        <item> borzoi   </item>
+        <item> bouvier   </item>
+        <item> boxer   </item>
+        <item> brabancon   </item>
+        <item> briard   </item>
+        <item> buhund  </item>
+        <item> bulldog </item>
+        <item> bullterrier  </item>
+        <item> cattledog </item>
+        <item> cavapoo   </item>
+        <item> chihuahua   </item>
+        <item> chippiparai</item>
+        <item> chow   </item>
+        <item> clumber   </item>
+        <item> cockapoo   </item>
+        <item> collie  </item>
+        <item> coonhound   </item>
+        <item> corgi</item>
+        <item> cotondetulear   </item>
+        <item> dachshund   </item>
+        <item> dalmatian   </item>
+        <item> dane</item>
+        <item> deerhound </item>
+        <item> dhole   </item>
+        <item> dingo   </item>
+        <item> doberman   </item>
+        <item> elkhound  </item>
+        <item> entlebucher   </item>
+        <item> eskimo   </item>
+        <item> finnish</item>
+        <item> frise  </item>
+        <item> gaddi </item>
+        <item> germanshepherd   </item>
+        <item> greyhound </item>
+        <item> groenendael   </item>
+        <item> havanese   </item>
+        <item> hound </item>
+        <item> husky   </item>
+        <item> keeshond   </item>
+        <item> kelpie   </item>
+        <item> kombai   </item>
+        <item> komondor   </item>
+        <item> kuvasz   </item>
+        <item> labradoodle   </item>
+        <item> labrador   </item>
+        <item> leonberg   </item>
+        <item> lhasa   </item>
+        <item> malamute   </item>
+        <item> malinois   </item>
+        <item> maltese   </item>
+        <item> mastiff </item>
+        <item> mexicanhairless   </item>
+        <item> mix   </item>
+        <item> mountain</item>
+        <item> mudhol  </item>
+        <item> newfoundland   </item>
+        <item> otterhound   </item>
+        <item> ovcharka </item>
+        <item> papillon   </item>
+        <item> pariah</item>
+        <item> pekinese   </item>
+        <item> pembroke   </item>
+        <item> pinscher </item>
+        <item> pitbull   </item>
+        <item> pointer </item>
+        <item> pomeranian   </item>
+        <item> poodle</item>
+        <item> pug   </item>
+        <item> puggle   </item>
+        <item> pyrenees   </item>
+        <item> rajapalayam</item>
+        <item> redbone   </item>
+        <item> retriever </item>
+        <item> ridgeback</item>
+        <item> rottweiler   </item>
+        <item> saluki   </item>
+        <item> samoyed   </item>
+        <item> schipperke   </item>
+        <item> schnauzer </item>
+        <item> segugio </item>
+        <item> setter</item>
+        <item> sharpei   </item>
+        <item> sheepdog</item>
+        <item> shiba   </item>
+        <item> shihtzu   </item>
+        <item> spaniel</item>
+        <item> spitz</item>
+        <item> springer </item>
+        <item> stbernard   </item>
+        <item> terrier </item>
+        <item> tervuren   </item>
+        <item> vizsla   </item>
+        <item> waterdog </item>
+        <item> weimaraner   </item>
+        <item> whippet   </item>
+        <item> wolfhound</item>
+    </string-array>
+
+</resources>

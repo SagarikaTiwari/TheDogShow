@@ -1,15 +1,15 @@
 package com.sagarika.data.mapper
 
-import com.sagarika.data.dto.BreedsEntity
-import com.sagarika.domain.entities.Breeds
+import com.sagarika.data.dto.BreedsDTO
+import com.sagarika.domain.model.BreedsModel
 import javax.inject.Inject
 
 class BreedsEntityDataMapper @Inject constructor(
     private val messageEntityDataMapper: MessageEntityDataMapper
 ) {
-    fun mapBreedsEntityToBreeds(breedsEntity: BreedsEntity): Breeds {
-        with(breedsEntity) {
-            return Breeds(messageEntityDataMapper.mapMessageEntityToMessage(messageEntity), status)
+    fun mapBreedsEntityToBreeds(breedsDTO: BreedsDTO): BreedsModel {
+        with(breedsDTO) {
+            return BreedsModel(messageEntityDataMapper.mapMessageEntityToMessage(messageDTO), status)
         }
     }
 }

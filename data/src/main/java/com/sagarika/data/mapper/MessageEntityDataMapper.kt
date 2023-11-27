@@ -1,14 +1,14 @@
 package com.sagarika.data.mapper
 
-import com.sagarika.data.dto.MessageEntity
-import com.sagarika.domain.entities.Message
+import com.sagarika.data.dto.MessageDTO
+import com.sagarika.domain.model.MessageModel
 import javax.inject.Inject
 
 class MessageEntityDataMapper @Inject constructor() {
 
-    fun mapMessageEntityToMessage(messageEntity: MessageEntity): Message {
-        with(messageEntity) {
-            return Message(
+    fun mapMessageEntityToMessage(messageDTO: MessageDTO): MessageModel {
+        with(messageDTO) {
+            return MessageModel(
                 affenpinscher,
                 african,
                 airedale,

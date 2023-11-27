@@ -1,13 +1,13 @@
 package com.sagarika.data.mapper
 
-import com.sagarika.data.dto.BreedImagesEntity
-import com.sagarika.domain.entities.BreedImages
+import com.sagarika.data.dto.BreedImagesDTO
+import com.sagarika.domain.model.BreedImagesModel
 
 class BreedImagesEntityDataMapper {
 
-    fun mapBreedImagesEntityToBreedImages(breedImagesEntity: BreedImagesEntity): BreedImages {
-        with(breedImagesEntity) {
-            return BreedImages(message, status)
+    fun mapBreedImagesEntityToBreedImages(breedImagesDTO: BreedImagesDTO): BreedImagesModel {
+        with(breedImagesDTO) {
+            return BreedImagesModel(message, status)
         }
     }
 }
