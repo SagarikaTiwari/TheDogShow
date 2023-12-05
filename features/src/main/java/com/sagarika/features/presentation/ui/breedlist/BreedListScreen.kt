@@ -41,7 +41,7 @@ fun BreedListScreen(
 
 @Composable
 fun BreedList(breedListViewModel: BreedListViewModel, callback: (breedName: String) -> Unit) {
-    LaunchedEffect(1) {
+    LaunchedEffect(true) {
         breedListViewModel.sendIntent(BreedListViewIntent.LoadData)
     }
 

@@ -2,8 +2,9 @@ package com.sagarika.features.presentation.mapper
 
 import com.sagarika.domain.model.MessageModel
 import com.sagarika.features.presentation.model.Message
+import javax.inject.Inject
 
-class MessageMapper {
+class MessageMapper  @Inject constructor(){
 
 
     fun mapMessageModelToMessage(messageModel: MessageModel): Message {

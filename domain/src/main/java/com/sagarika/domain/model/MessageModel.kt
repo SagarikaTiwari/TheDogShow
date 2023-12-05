@@ -1,6 +1,6 @@
 package com.sagarika.domain.model
 
-class MessageModel(
+data class MessageModel(
     val affenpinscher: List<Any>,
     val african: List<Any>,
     val airedale: List<Any>,

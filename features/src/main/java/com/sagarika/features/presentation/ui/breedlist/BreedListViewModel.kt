@@ -32,8 +32,7 @@ class BreedListViewModel @Inject constructor(
     private val _viewState =
         MutableStateFlow<BreedListViewState>(BreedListViewState.Loading)
     val viewState: StateFlow<BreedListViewState> = _viewState
-    private val _effect: Flow<BreedListSideEffect> = TODO()
-    val effect : Flow<BreedListSideEffect> = _effect
+
     var isLoading = false
 
     private fun showBreedGallery(breedName: String) {

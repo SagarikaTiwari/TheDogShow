@@ -1,6 +1,6 @@
 package com.sagarika.data.dto
 
-data class MessageDTO(
+data class Message(
     val affenpinscher: List<Any>,
     val african: List<Any>,
     val airedale: List<Any>,
