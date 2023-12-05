@@ -15,6 +15,5 @@ fun LoadImage(url: String, description: String, modifier: Modifier) {
         painter = painter,
         contentDescription = description,
         modifier = modifier
-
     )
 }

@@ -33,12 +33,12 @@ class BreedGalleryViewModel @Inject constructor(
 
     override fun sendIntent(intent: BreedGalleryViewIntent) {
         when (intent) {
-            is BreedGalleryViewIntent.LoadData -> fetchBreedList(breedName = intent.breedName)
+            is BreedGalleryViewIntent.LoadData -> fetchBreedImages(breedName = intent.breedName)
             is BreedGalleryViewIntent.OnBackPressed -> goToMainScreen()
         }
     }
 
-    private fun fetchBreedList(breedName: String) {
+    private fun fetchBreedImages(breedName: String) {
         viewModelScope.launch(dispatcher) {
             isLoading = true
             when (val breedGallery = breedImagesUseCase(breedName = breedName)) {

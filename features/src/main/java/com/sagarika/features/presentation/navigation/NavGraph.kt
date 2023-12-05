@@ -33,7 +33,7 @@ fun NavGraph(
 
             BaseScreen(title = breedList, showBackButton = false, content = {
                 BreedListScreen(breedListViewModel) {
-                    navController.navigate(Screens.BreedGalleryScreen.route + "/{$it}")
+                    navController.navigate(Screens.BreedGalleryScreen.route + "/$it")
                 }
             })
         }
