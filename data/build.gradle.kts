@@ -81,6 +81,7 @@ dependencies {
     testImplementation ("org.mockito:mockito-core:2.25.0")
     testImplementation ("org.mockito:mockito-inline:2.13.0")
     testImplementation ("io.mockk:mockk:1.12.5")
+    testImplementation("pl.pragmatists:JUnitParams:1.1.1")
 
 
 }
