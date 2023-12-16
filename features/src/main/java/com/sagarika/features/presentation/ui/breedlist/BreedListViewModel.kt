@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,12 +33,14 @@ class BreedListViewModel @Inject constructor(
     private val _viewState =
         MutableStateFlow<BreedListViewState>(BreedListViewState.Loading)
     val viewState: StateFlow<BreedListViewState> = _viewState
+    private val _sideEffect = Channel<BreedListSideEffect>()
+    val sideEffect: Flow<BreedListSideEffect>
+        get() = _sideEffect.receiveAsFlow()
 
-    var isLoading = false
 
     private fun showBreedGallery(breedName: String) {
         viewModelScope.launch {
-         //   _effect.flowOn() BreedListSideEffect.ShowGallery(breedName))
+            _sideEffect.send(BreedListSideEffect.ShowGallery(breedName))
         }
     }
 
@@ -50,18 +53,16 @@ class BreedListViewModel @Inject constructor(
 
     private fun fetchBreedList() {
         viewModelScope.launch(dispatcher) {
-            isLoading = true
             when (val breedList = breedListUseCase()) {
                 is Response.Error -> {
                     _viewState.value = BreedListViewState.Error(errorMsg = errorMsg)
-                    isLoading = false
                 }
+
                 is Response.Success -> {
                     _viewState.value =
                         BreedListViewState.Success(
                             breedListMapper.mapBreedsModelToBreeds(breedList.data)
                         )
-                    isLoading = false
                 }
             }
         }

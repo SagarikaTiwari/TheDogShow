@@ -14,10 +14,8 @@ import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.sagarika.features.presentation.constants.FontSize
 import com.sagarika.features.presentation.constants.back
 import com.sagarika.features.presentation.ui.customcomposables.CustomText
 
@@ -31,7 +29,7 @@ fun BaseScreen(
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        MyAppBar(title)
+        MyAppBar(title, showBackButton, onBackClicked)
         content()
     }
 
@@ -58,7 +56,7 @@ fun MyAppBar(
 
                 CustomText(
                     text = title,
-                    color = Color.Red,
+                    color = MaterialTheme.colors.onPrimary,
                     modifier = Modifier.fillMaxWidth(1f)
                     )
             }

@@ -41,16 +41,20 @@ fun BreedListScreen(
 
 @Composable
 fun BreedList(breedListViewModel: BreedListViewModel, callback: (breedName: String) -> Unit) {
-    LaunchedEffect(true) {
-        breedListViewModel.sendIntent(BreedListViewIntent.LoadData)
-    }
-
+    LaunchedEffect(key1 = true, block = {
+        breedListViewModel.sendIntent(
+            BreedListViewIntent.LoadData
+        )
+        breedListViewModel.sideEffect.collect {
+            if (it is BreedListSideEffect.ShowGallery) {
+                callback(it.breedName)
+            }
+        }
+    })
     val breedListState: BreedListViewState by breedListViewModel.viewState.collectAsState()
-
     when (breedListState) {
         is BreedListViewState.Loading ->
             LoadingIndicator()
-
 
         is BreedListViewState.Error -> {
             ErrorViewInABox()
@@ -71,7 +75,8 @@ fun BreedList(breedListViewModel: BreedListViewModel, callback: (breedName: Stri
                     ) {
                         BreedListRow(
                             breedName = breedListArray[it],
-                            message = breedList.data.message, callback
+                            message = breedList.data.message,
+                            breedListViewModel = breedListViewModel
                         )
                     }
                 }
@@ -84,19 +89,21 @@ fun BreedList(breedListViewModel: BreedListViewModel, callback: (breedName: Stri
 }
 
 @Composable
-fun BreedListRow(breedName: String, message: Message, callback: (breedName: String) -> Unit) {
+fun BreedListRow(breedName: String, message: Message, breedListViewModel: BreedListViewModel ) {
     Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp)
                 .clickable {
-                    callback(breedName)
-                }
+                    breedListViewModel.sendIntent(BreedListViewIntent.OnBreedClick(breedName))
+                 }
         ) {
             CustomText(
                 breedName,
-                Modifier.fillMaxWidth(1f).padding(10.dp),
+                Modifier
+                    .fillMaxWidth(1f)
+                    .padding(10.dp),
                 color = MaterialTheme.colors.primary
             )
         }

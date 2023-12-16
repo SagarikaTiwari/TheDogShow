@@ -8,9 +8,6 @@ import retrofit2.http.Query
 
 interface DogRepository {
 
-    @GET("breeds/list/all")
     suspend fun getAllBreeds(): Response<BreedsModel>
-
-    @GET("breed/breed/images")
-    suspend fun getBreedImages(@Query("breed")breedName: String): Response<BreedImagesModel>
+    suspend fun getBreedImages(breedName: String): Response<BreedImagesModel>
 }

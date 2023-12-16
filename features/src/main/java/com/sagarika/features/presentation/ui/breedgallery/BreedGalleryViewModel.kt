@@ -34,7 +34,7 @@ class BreedGalleryViewModel @Inject constructor(
     override fun sendIntent(intent: BreedGalleryViewIntent) {
         when (intent) {
             is BreedGalleryViewIntent.LoadData -> fetchBreedImages(breedName = intent.breedName)
-            is BreedGalleryViewIntent.OnBackPressed -> goToMainScreen()
+            else -> {}
         }
     }
 
@@ -58,7 +58,5 @@ class BreedGalleryViewModel @Inject constructor(
         }
     }
 
-    private fun goToMainScreen() {
 
-    }
 }
