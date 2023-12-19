@@ -1,7 +1,5 @@
 package com.sagarika.domain.usecases
 
-import com.sagarika.common.Response
-import com.sagarika.domain.model.BreedImagesModel
 import com.sagarika.domain.repository.DogRepository
 import io.mockk.coEvery
 import io.mockk.coVerify

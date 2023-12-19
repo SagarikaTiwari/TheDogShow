@@ -33,8 +33,7 @@ fun NavGraph(
 
             BaseScreen(title = breedList, showBackButton = false, content = {
                 BreedListScreen(breedListViewModel) {
-                    navController.navigate(Screens.BreedGalleryScreen.route + "/$it")
-                }
+                    navController.navigate(Screens.BreedGalleryScreen.route + "/$it")         }
             })
         }
 
@@ -44,11 +43,13 @@ fun NavGraph(
                 navArgument("breedName") {
                     type = NavType.StringType
                 },
+
             )
         ) {
             val breedName = remember {
                 it.arguments?.getString("breedName")
             }
+
             BaseScreen(
                 title = breedImages,
                 showBackButton = true,

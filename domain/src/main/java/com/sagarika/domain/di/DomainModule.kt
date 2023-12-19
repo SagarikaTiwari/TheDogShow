@@ -1,8 +1,11 @@
 package com.sagarika.domain.di
 
-import com.sagarika.domain.repository.DogRepository
+import com.sagarika.domain.model.DogBreed
+import com.sagarika.domain.model.DogBreedImage
+import com.sagarika.domain.usecases.BaseUseCase
 import com.sagarika.domain.usecases.BreedImagesUseCase
 import com.sagarika.domain.usecases.BreedListUseCase
+import com.sagarika.domain.usecases.DogSubBreedUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -11,11 +14,16 @@ import dagger.hilt.android.components.ViewModelComponent
 
 @InstallIn(ViewModelComponent::class)
 @Module
-class DomainModule {
+abstract class DomainModule {
 
 
-    @Provides
-    fun providesBreedListUseCase(dogRepository: DogRepository): BreedListUseCase = BreedListUseCase(dogRepository)
-    @Provides
-    fun providesBreedImagesUsecase(dogRepository: DogRepository): BreedImagesUseCase = BreedImagesUseCase(dogRepository)
+//    @Binds
+//    abstract fun bindsBreedListUseCase(breedListUseCase: BreedListUseCase): BaseUseCase<Unit, List<DogBreed>>
+//
+//    @Binds
+//    abstract fun bindsDogBreedImagesUseCase(breedImagesUseCase: BreedImagesUseCase): BaseUseCase<String, List<DogBreedImage>>
+//
+//    @Binds
+//    abstract fun bindsDogSubBreedUseCase(breedUseCase: DogSubBreedUseCase): BaseUseCase<DogSubBreedUseCase.DogSubBreedParams, List<DogBreedImage>>
+
 }

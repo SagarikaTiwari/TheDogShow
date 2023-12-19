@@ -1,9 +1,6 @@
 package com.sagarika.data.mapper
 
 import com.sagarika.data.dto.BreedListDTO
-import com.sagarika.data.dto.Message
-import com.sagarika.domain.model.BreedsModel
-import com.sagarika.domain.model.MessageModel
 import org.junit.Assert.*
 import org.junit.Test
 

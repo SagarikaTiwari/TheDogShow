@@ -1,17 +1,22 @@
 package com.sagarika.data.remote
 
 
-import com.sagarika.common.Response
-import com.sagarika.data.dto.BreedImagesDTO
-import com.sagarika.data.dto.BreedListDTO
-import com.sagarika.domain.model.BreedImagesModel
+import com.sagarika.data.dto.DogBreedImageResponse
+import com.sagarika.data.dto.DogBreedResponse
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface ApiService {
-    @GET("breeds/list/all")
-    suspend fun getBreedList(): BreedListDTO
-    @GET("breed/breed/images")
-    suspend fun getBreedImages(@Query("breed") breedName: String): BreedImagesDTO
+    @GET("breeds/list/all/")
+    suspend fun getAllBreeds(): Response<DogBreedResponse>
+
+    @GET("breed/{breed_name}/images/")
+    suspend fun getBreedImages(@Path("breed_name") breedName: String): Response<DogBreedImageResponse>
+
+    @GET("breed/{breed_name}/{sub_breed_name}/images/")
+    suspend fun fetchDogSubBreedImages(
+        @Path("breed_name") breedName: String,
+        @Path("sub_breed_name") subBreedName: String
+    ): Response<DogBreedImageResponse>
 }

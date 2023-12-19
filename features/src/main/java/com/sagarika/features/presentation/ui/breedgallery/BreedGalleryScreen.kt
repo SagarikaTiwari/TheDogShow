@@ -1,28 +1,17 @@
 package com.sagarika.features.presentation.ui.breedgallery
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
-import com.sagarika.common.Response
-import com.sagarika.features.presentation.model.BreedImage
-import com.sagarika.features.presentation.ui.breedgallery.BreedGalleryViewModel
-import com.sagarika.features.presentation.ui.breedlist.BreedListRow
+import com.sagarika.features.presentation.model.DogBreedImagePresentation
 import com.sagarika.features.presentation.ui.customcomposables.ErrorViewInABox
 import com.sagarika.features.presentation.ui.customcomposables.LoadImage
 import com.sagarika.features.presentation.ui.customcomposables.LoadingIndicator
@@ -32,41 +21,55 @@ fun BreedGalleryScreen(
     breedName: String,
     breedGalleryViewModel: BreedGalleryViewModel,
 ) {
+
+    val breedSubbreedList = breedName.split("$")
+
     LaunchedEffect(true) {
-        breedGalleryViewModel.sendIntent(BreedGalleryViewIntent.LoadData(breedName))
+        if (breedSubbreedList[1].length > 1) {
+            breedGalleryViewModel.sendIntent(
+                BreedGalleryViewIntent.LoadSubBreedImage(
+                    breedSubbreedList[0],
+                    breedSubbreedList[1]
+                )
+            )
+
+        } else {
+            breedGalleryViewModel.sendIntent(BreedGalleryViewIntent.LoadBreedImage(breedSubbreedList[0]))
+
+        }
     }
 
-    val viewState = breedGalleryViewModel.viewState.collectAsState().value
-
-    when (viewState) {
-        is BreedGalleryViewState.Loading -> {
+    when (val viewState = breedGalleryViewModel.dogBreedImagesState.collectAsState().value) {
+        is DogBreedImagesState.Loading -> {
             LoadingIndicator()
         }
 
-        is BreedGalleryViewState.Error -> {
+        is DogBreedImagesState.Error -> {
             ErrorViewInABox()
         }
 
-        is BreedGalleryViewState.Success -> {
-            PhotoGrid(viewState.data)
+        is DogBreedImagesState.DogBreedImages -> {
+            PhotoGrid(viewState.dogBreedImages)
         }
+
+        else -> {}
     }
 
 }
 
 @Composable
-fun PhotoGrid(breedImage: BreedImage) {
+fun PhotoGrid(dogBreedImageList: List<DogBreedImagePresentation>) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 128.dp)
     ) {
-        items(breedImage.message.size) {
+        items(dogBreedImageList.size) {
             Card(
                 border = BorderStroke(2.dp, color = MaterialTheme.colors.background),
                 elevation = 15.dp,
             ) {
 
                 LoadImage(
-                    url = breedImage.message[it],
+                    url = dogBreedImageList[it].imageUrl,
                     description = "photo",
                     modifier = Modifier.size(128.dp)
                 )

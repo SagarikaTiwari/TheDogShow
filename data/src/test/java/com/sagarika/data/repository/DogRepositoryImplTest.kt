@@ -1,15 +1,8 @@
 package com.sagarika.data.repository
 
-import com.sagarika.common.Response
-import com.sagarika.data.dto.BreedImagesDTO
-import com.sagarika.data.dto.Message
+import com.sagarika.data.dto.DogBreedImageResponse
 import com.sagarika.data.dto.BreedListDTO
-import com.sagarika.data.mapper.BreedImagesEntityDataMapper
-import com.sagarika.data.mapper.BreedsEntityDataMapper
 import com.sagarika.data.remote.ApiService
-import com.sagarika.domain.model.BreedImagesModel
-import com.sagarika.domain.model.BreedsModel
-import com.sagarika.domain.model.MessageModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import junitparams.JUnitParamsRunner
@@ -81,7 +74,7 @@ class DogRepositoryImplTest {
 
         val breedsModel = BreedsModel(messageModel, "success")
 
-        val breedImagesDTO = BreedImagesDTO(
+        val dogBreedImageResponse = DogBreedImageResponse(
             listOf(
                 "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg",
                 "https://images.dog.ceo/breeds/hound-afghan/n02088094_10263.jpg",
@@ -127,8 +120,8 @@ class DogRepositoryImplTest {
     fun `Given api succeeds When getBreedImages is called then it returns success as response`() =
         runTest {
 
-            coEvery { apiService.getBreedImages("hound") } returns breedImagesDTO
-            coEvery { breedImagesEntityDataMapper.mapBreedImagesEntityToBreedImages(breedImagesDTO) } returns breedImagesModel
+            coEvery { apiService.getBreedImages("hound") } returns dogBreedImageResponse
+            coEvery { breedImagesEntityDataMapper.mapBreedImagesEntityToBreedImages(dogBreedImageResponse) } returns breedImagesModel
             val response = dogRepositoryImpl.getBreedImages("hound")
             assert(response == Response.Success(breedImagesModel))
         }
