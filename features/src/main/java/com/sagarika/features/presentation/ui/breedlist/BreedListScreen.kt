@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,12 +26,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.sagarika.features.R
-import com.sagarika.features.presentation.model.DogBreedPresentation
+ import com.sagarika.features.presentation.model.DogBreedPresentation
 import com.sagarika.features.presentation.model.DogSubBreedPresentation
 import com.sagarika.features.presentation.ui.customcomposables.CustomText
 import com.sagarika.features.presentation.ui.customcomposables.ErrorViewInABox
 import com.sagarika.features.presentation.ui.customcomposables.LoadingIndicator
+import com.sagarika.thedogshow.R
 
 @Composable
 fun BreedListScreen(
@@ -72,8 +74,8 @@ fun BreedList(breedListViewModel: BreedListViewModel, callback: (breedName: Stri
             ) {
                 items(breedList.size) {
                     Card(
-                        border = BorderStroke(2.dp, color = MaterialTheme.colors.background),
-                        elevation = 15.dp,
+                        border = BorderStroke(2.dp, color = MaterialTheme.colorScheme.background),
+                        elevation = CardDefaults.cardElevation(10.dp),
                     ) {
                         Column {
 
@@ -122,7 +124,7 @@ fun SubBreedListRow(subBreed: DogSubBreedPresentation, breedListViewModel: Breed
                 Modifier
                     .fillMaxWidth(1f)
                     .padding(10.dp),
-                color = MaterialTheme.colors.primary
+                color = MaterialTheme.colorScheme.primary
             )
 
 
@@ -159,13 +161,13 @@ fun BreedListRow(
                             )
                         )
                     },
-                color = MaterialTheme.colors.primary
+                color = MaterialTheme.colorScheme.primary
             )
             if (dogBreedPresentation.subBreeds.isNotEmpty()) {
                 val painter: Painter = if (mExpanded)
-                    painterResource(id = R.drawable.close_dropdown)
+                    painterResource(id = com.sagarika.thedogshow.R.drawable.close_dropdown)
                 else
-                    painterResource(id = R.drawable.add_image)
+                    painterResource(id = com.sagarika.thedogshow.R.drawable.add_image)
                 Icon(painter = painter, contentDescription = "dropdown image",
                     modifier = Modifier.clickable {
                         mExpanded = !mExpanded

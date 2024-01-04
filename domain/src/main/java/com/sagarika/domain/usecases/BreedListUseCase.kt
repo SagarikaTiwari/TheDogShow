@@ -7,11 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 
-class BreedListUseCase @Inject constructor(private val dogBreedsRepository: DogBreedRepository) :
-    BaseUseCase<Unit, List<DogBreed>>{
-
-
-    override fun invoke(params: Unit): Flow<Result<List<DogBreed>?>> {
+class BreedListUseCase @Inject constructor(private val dogBreedsRepository: DogBreedRepository)  {
+      operator fun invoke(): Flow<Result<List<DogBreed>?>> {
         return dogBreedsRepository.getAllBreeds()
     }
 

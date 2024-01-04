@@ -3,17 +3,20 @@ package com.sagarika.features.presentation.ui.common
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.primarySurface
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sagarika.features.presentation.constants.back
@@ -35,15 +38,15 @@ fun BaseScreen(
 
 }
 
-@Composable
-fun MyAppBar(
-    title: String,
-    showBackButton: Boolean = false,
-    onBackClicked: (() -> Unit)? = null
-) {
 
-    TopAppBar(
-        elevation = 4.dp,
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyAppBar(title: String,  showBackButton: Boolean = false,  onBackClicked: (() -> Unit)? = null) {
+    CenterAlignedTopAppBar(
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+        ),
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (showBackButton) {
@@ -56,12 +59,12 @@ fun MyAppBar(
 
                 CustomText(
                     text = title,
-                    color = MaterialTheme.colors.onPrimary,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.fillMaxWidth(1f)
-                    )
+                )
             }
         },
-        backgroundColor = MaterialTheme.colors.primarySurface,
+
     )
 }
 

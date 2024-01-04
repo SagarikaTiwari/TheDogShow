@@ -4,12 +4,14 @@ import androidx.lifecycle.viewModelScope
 import com.sagarika.common.Failure
 import com.sagarika.common.Result
 import com.sagarika.domain.model.DogBreedImage
-import com.sagarika.domain.usecases.BreedImagesUseCase
+ import com.sagarika.domain.usecases.BreedImagesUseCase
 import com.sagarika.domain.usecases.DogSubBreedUseCase
 import com.sagarika.features.presentation.constants.errorMsg
+import com.sagarika.features.presentation.constants.servererrorMsg
 import com.sagarika.features.presentation.mapper.toPresentation
 import com.sagarika.features.presentation.model.DogBreedImagePresentation
 import com.sagarika.features.presentation.ui.base.BaseViewModel
+import com.sagarika.features.presentation.ui.breedlist.BreedListViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class BreedGalleryViewModel @Inject constructor(
     private val breedImagesUseCase: BreedImagesUseCase,
-    private val subBreedUseCase: DogSubBreedUseCase,
+    private val subBreedUseCase:  DogSubBreedUseCase ,
 ) :
     BaseViewModel<DogBreedImagesState, BreedGalleryViewIntent, BreedGallerySideEffect>() {
 
@@ -82,10 +84,13 @@ class BreedGalleryViewModel @Inject constructor(
 
     }
 
-    @Suppress("UNUSED_PARAMETER")
     private fun handleError(failure: Failure) {
-        _dogBreedImagesState.value = DogBreedImagesState.Error(errorMsg)
+        when (failure) {
+            is Failure.DataError -> _dogBreedImagesState.value = DogBreedImagesState.Error(errorMsg)
+            is Failure.ServerError -> _dogBreedImagesState.value = DogBreedImagesState.Error(servererrorMsg)
+        }
     }
+
 
     private fun handleSuccess(dogBreedImages: List<DogBreedImage>) {
         if (dogBreedImages.isEmpty()) {

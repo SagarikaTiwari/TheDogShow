@@ -6,10 +6,9 @@ import com.sagarika.domain.repository.DogBreedImagesRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class BreedImagesUseCase @Inject constructor(private val dogBreedImagesRepository: DogBreedImagesRepository) :
-    BaseUseCase<String, List<DogBreedImage>> {
+class BreedImagesUseCase @Inject constructor(private val dogBreedImagesRepository: DogBreedImagesRepository)  {
 
-    override fun invoke(params: String): Flow<Result<List<DogBreedImage>?>> {
+     operator fun invoke(params: String): Flow<Result<List<DogBreedImage>?>> {
         return dogBreedImagesRepository.getDogBreedImages(params)
     }
 }

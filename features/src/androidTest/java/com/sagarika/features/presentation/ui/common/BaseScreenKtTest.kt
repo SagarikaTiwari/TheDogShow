@@ -1,11 +1,11 @@
 package com.sagarika.features.presentation.ui.common
-
-import androidx.compose.material.MaterialTheme
+ 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.sagarika.features.presentation.theme.MyApplication
-import org.junit.Rule
+ import org.junit.Rule
 import org.junit.Test
+ import org.junit.runner.RunWith
+
 
 
 internal class CustomTopAppBarTest {
@@ -15,12 +15,11 @@ internal class CustomTopAppBarTest {
     @Test
     fun `GivenAppStartedWhenCustomTopAppBarWithTitleDisplayedThenValidateTheTile`() {
         composeTestRule.setContent {
-            MyApplication {
-                MyAppBar(
+                 MyAppBar(
                     Title,
-                    false,
-                    {})
-            }
+                    false
+                ) {}
+
         }
 
         composeTestRule.onNodeWithText(text = Title).assertExists()

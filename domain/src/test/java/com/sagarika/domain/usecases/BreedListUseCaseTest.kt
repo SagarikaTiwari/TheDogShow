@@ -1,58 +1,42 @@
 package com.sagarika.domain.usecases
 
-import com.sagarika.domain.repository.DogRepository
+import com.sagarika.common.Result
+import com.sagarika.domain.model.DogBreed
+import com.sagarika.domain.repository.DogBreedRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
+@ExperimentalCoroutinesApi
 class BreedListUseCaseTest {
-    companion object {
-        private lateinit var breedListUseCase: BreedListUseCase
-        private val dogRepository = mockk<DogRepository>()
-        val messageModel = MessageModel(
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            listOf("kelpie", "shepherd"), listOf("indian"), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-            emptyList()
-        )
 
-        val breedsModel = BreedsModel(messageModel, "success")
-    }
+    private lateinit var getDogBreedsUseCase: BreedListUseCase
+
+
+    private var dogBreedsRepository = mockk<DogBreedRepository>()
 
     @Before
     fun setUp() {
-        breedListUseCase = BreedListUseCase(dogRepository)
+        getDogBreedsUseCase = BreedListUseCase(dogBreedsRepository)
     }
 
     @Test
-    fun `When breedListUseCase is called then it returns Success as Response `() = runTest {
-        coEvery {
-            dogRepository.getAllBreeds()
-        } returns Response.Success(breedsModel)
-        val res =breedListUseCase()
-        coVerify { dogRepository.getAllBreeds() }
-        assert(res == Response.Success(breedsModel))
-    }
+    fun `Given repository returns success When breedlistusecase is called Then invoke function should get called from repository`() =
+        runTest {
+            coEvery { dogBreedsRepository.getAllBreeds() } returns flow {
+                emit(
+                    Result.Success(emptyList<DogBreed>())
+                )
+            }
+            getDogBreedsUseCase(Unit)
+            coVerify(exactly = 1) { dogBreedsRepository.getAllBreeds() }
+        }
 }

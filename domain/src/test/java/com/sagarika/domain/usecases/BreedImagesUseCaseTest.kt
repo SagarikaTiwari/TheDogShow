@@ -1,39 +1,39 @@
 package com.sagarika.domain.usecases
 
-import com.sagarika.domain.repository.DogRepository
+import com.sagarika.common.Result
+import com.sagarika.domain.model.DogBreedImage
+import com.sagarika.domain.repository.DogBreedImagesRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
+@ExperimentalCoroutinesApi
 class BreedImagesUseCaseTest {
-    companion object {
+    private lateinit var getDogBreedImagesUseCase: BreedImagesUseCase
 
-        private lateinit var breedImagesUseCase: BreedImagesUseCase
-        private val dogRepository = mockk<DogRepository>()
-        val breedImagesModel = BreedImagesModel(
-            listOf(
-                "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg",
-                "https://images.dog.ceo/breeds/hound-afghan/n02088094_10263.jpg",
-            ), "success"
-        )
-    }
+    private var dogBreedImagesRepository = mockk<DogBreedImagesRepository>()
 
     @Before
     fun setUp() {
-        breedImagesUseCase = BreedImagesUseCase(dogRepository)
+        getDogBreedImagesUseCase = BreedImagesUseCase(dogBreedImagesRepository)
     }
 
     @Test
-    fun `When breedListUseCase is called then it returns Success as Response `() = runTest {
-        coEvery {
-            breedImagesUseCase("hound")
-        } returns Response.Success(breedImagesModel)
-        val res = breedImagesUseCase("hound")
-        coVerify { breedImagesUseCase("hound") }
-        assert(res == Response.Success(breedImagesModel))
-    }
+    fun `Given repository returns success When breedImagesusecase is called Then invoke function should get called from repository`() =
+        runTest {
+            val breedName = "hound"
+            coEvery { dogBreedImagesRepository.getDogBreedImages(breedName) } returns flow {
+                emit(
+                    Result.Success(emptyList<DogBreedImage>())
+                )
+            }
+            getDogBreedImagesUseCase(breedName)
+            coVerify(exactly = 1) { dogBreedImagesRepository.getDogBreedImages(breedName) }
+        }
 }

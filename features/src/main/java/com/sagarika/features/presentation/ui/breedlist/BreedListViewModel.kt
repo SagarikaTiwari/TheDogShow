@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import com.sagarika.domain.usecases.BreedListUseCase
 import com.sagarika.features.presentation.constants.errorMsg
+import com.sagarika.features.presentation.constants.servererrorMsg
 import com.sagarika.features.presentation.mapper.toPresentation
 import com.sagarika.features.presentation.model.DogBreedPresentation
 import kotlinx.coroutines.Job
@@ -43,16 +44,21 @@ class BreedListViewModel @Inject constructor(
             _sideEffect.send(BreedListSideEffect.ShowGallery(breedName))
         }
     }
+
     private fun showSubBreedGallery(breedName: String, subBreed: String) {
         viewModelScope.launch {
             _sideEffect.send(BreedListSideEffect.ShowSubBreedGallery(breedName, subBreed))
         }
     }
+
     override fun sendIntent(intent: BreedListViewIntent) {
         when (intent) {
             is BreedListViewIntent.LoadData -> fetchBreedList()
             is BreedListViewIntent.OnBreedClick -> showBreedGallery(intent.breedName)
-            is BreedListViewIntent.OnSubBreedClick -> showSubBreedGallery(intent.breedName, intent.subBreedName)
+            is BreedListViewIntent.OnSubBreedClick -> showSubBreedGallery(
+                intent.breedName,
+                intent.subBreedName
+            )
 
         }
     }
@@ -60,7 +66,7 @@ class BreedListViewModel @Inject constructor(
     private fun fetchBreedList() {
         viewModelScope.launch {
             _viewState.value = BreedListViewState.Loading
-            getDogBreeds(params = Unit).collect() { result ->
+            getDogBreeds().collect() { result ->
                 when (result) {
                     is Result.Success -> {
                         result.data?.let { handleSuccess(it) }
@@ -76,9 +82,11 @@ class BreedListViewModel @Inject constructor(
     }
 
 
-    @Suppress("UNUSED_PARAMETER")
-    private fun handleError(failure: Failure) {
-        _viewState.value = BreedListViewState.Error(errorMsg)
+     private fun handleError(failure: Failure) {
+        when (failure) {
+            is Failure.DataError -> _viewState.value = BreedListViewState.Error(errorMsg)
+             is Failure.ServerError -> _viewState.value = BreedListViewState.Error(servererrorMsg)
+        }
     }
 
     private fun handleSuccess(dogBreeds: List<DogBreed>) {

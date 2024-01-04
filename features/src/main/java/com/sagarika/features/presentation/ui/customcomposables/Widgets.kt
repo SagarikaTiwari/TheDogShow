@@ -9,9 +9,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,8 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.sagarika.features.R
-import com.sagarika.features.presentation.constants.errorMsg
+ import com.sagarika.features.presentation.constants.errorMsg
 
 @Composable
 
@@ -35,7 +35,7 @@ fun LoadingIndicator() {
             modifier = Modifier
                 .width(100.dp)
                 .height(100.dp),
-            color = MaterialTheme.colors.secondaryVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

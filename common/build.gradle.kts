@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-    namespace = "com.sagarika.common"
-    compileSdk = 34
+    namespace = App.id
+    compileSdk = Versions.compilesdk
 
     defaultConfig {
-        minSdk = 24
+        minSdk = Versions.minsdk
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = TestDependencies.instrumentation_runner
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -33,11 +33,15 @@ android {
 }
 
 dependencies {
+    //Android Dependencies
+    implementation ( Dependencies.appcompat )
+    implementation ( Dependencies.google_material )
 
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.10.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    // Kotlin dependencies
+    implementation ( Dependencies.core_ktx )
+    implementation ( Dependencies.kotlin_standard_library )
+    implementation ( Dependencies.kotlin_reflect )
+    implementation ( Dependencies.kotlin_coroutines_core )
+    implementation ( Dependencies.kotlin_coroutines_android )
+    implementation ( Dependencies.viewmodel_ktx )
 }

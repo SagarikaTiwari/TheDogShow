@@ -1,46 +1,131 @@
 package com.sagarika.features.presentation.ui.breedlist
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import android.os.Build
+import com.sagarika.common.Failure
+import com.sagarika.common.Result
+import com.sagarika.domain.model.DogBreed
+import com.sagarika.domain.model.DogSubBreed
 import com.sagarika.domain.usecases.BreedListUseCase
-import com.sagarika.features.presentation.mapper.DogBreedDomainToDogBreedPresentation
+import com.sagarika.features.presentation.constants.errorMsg
+import com.sagarika.features.presentation.constants.servererrorMsg
+import com.sagarika.features.presentation.model.DogBreedPresentation
+import com.sagarika.features.presentation.model.DogSubBreedPresentation
+import com.sagarika.features.presentation.ui.breedlist.fakes.FakeData
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TestRule
+import org.junit.runner.RunWith
 
-@ExperimentalCoroutinesApi
+@OptIn(ExperimentalCoroutinesApi::class)
 
 class BreedListViewModelTest {
-    companion object {
-        @get:Rule
-        var rule: TestRule = InstantTaskExecutorRule()
-        private val dispatcher = StandardTestDispatcher()
-        private lateinit var viewModel: BreedListViewModel
-        private val breedListUseCase = mockk<BreedListUseCase>()
-        private val dogBreedDomainToDogBreedPresentation =
-            mockk<DogBreedDomainToDogBreedPresentation>()
-    }
+
+    private var getDogBreedsUseCase = mockk<BreedListUseCase>()
+    private lateinit var dogBreedViewModel: BreedListViewModel
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @Before
-    fun setUp() {
-        viewModel = BreedListViewModel(breedListUseCase, dogBreedDomainToDogBreedPresentation, dispatcher)
+    fun setup() {
+        Dispatchers.setMain(testDispatcher)
+        dogBreedViewModel =
+            BreedListViewModel(getDogBreedsUseCase)
     }
 
     @Test
-    fun `GIVE breed list data WHEN LoadData ViewIntent sent THEN viewState contains list of breeds`() =
+    fun `GIVEN breed list data WHEN LoadData ViewIntent sent THEN viewState contains list of breeds`() =
         runTest {
+            coEvery {
+                getDogBreedsUseCase()
+            } returns
+                    FakeData.getBreedListWithSuccess()
 
-            viewModel.sendIntent(BreedListViewIntent.LoadData)
-            dispatcher.scheduler.advanceUntilIdle()
+            dogBreedViewModel.sendIntent(BreedListViewIntent.LoadData)
+
             assertEquals(
-                viewModel.viewState.value,
-                BreedListViewState.Loading
-
+                dogBreedViewModel.viewState.value,
+                BreedListViewState.DogBreeds(
+                    dogBreeds = listOf(
+                        DogBreedPresentation(
+                            breedNameInitial = "H",
+                            breedName = "Hound",
+                            subBreeds = listOf(DogSubBreedPresentation("A", "Hound", "Afd"))
+                        ),
+                        DogBreedPresentation(
+                            breedNameInitial = "A",
+                            breedName = "African",
+                            subBreeds = emptyList()
+                        )
+                    )
+                )
             )
         }
+
+
+    @Test
+    fun `GIVEN empty data WHEN LoadData ViewIntent sent THEN viewState is set to No Breeds`() =
+        runTest {
+            coEvery {
+                getDogBreedsUseCase()
+            } returns
+                    FakeData.getBreedListWithNoBreeds()
+
+            dogBreedViewModel.sendIntent(BreedListViewIntent.LoadData)
+
+            assertEquals(
+                dogBreedViewModel.viewState.value,
+                BreedListViewState.NoDogBreeds
+            )
+        }
+
+    @Test
+    fun `GIVEN data error WHEN LoadData ViewIntent sent THEN viewState is set to Data Error State`() =
+        runTest {
+            coEvery {
+                getDogBreedsUseCase()
+            } returns
+                    FakeData.getBreedListWithDataError()
+
+            dogBreedViewModel.sendIntent(BreedListViewIntent.LoadData)
+
+            assertEquals(
+                dogBreedViewModel.viewState.value,
+                BreedListViewState.Error(errorMessage = errorMsg)
+            )
+        }
+
+    @Test
+    fun `GIVEN Server error WHEN LoadData ViewIntent sent THEN viewState is set to Network Error State`() =
+        runTest {
+            coEvery {
+                getDogBreedsUseCase()
+            } returns
+                    FakeData.getBreedListWithServerError()
+
+            dogBreedViewModel.sendIntent(BreedListViewIntent.LoadData)
+
+            assertEquals(
+                dogBreedViewModel.viewState.value,
+                BreedListViewState.Error(errorMessage = servererrorMsg)
+            )
+        }
+
+    @After
+    fun clean() {
+        Dispatchers.resetMain()
+    }
+
 }

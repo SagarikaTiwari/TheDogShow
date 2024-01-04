@@ -4,8 +4,10 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -64,8 +66,8 @@ fun PhotoGrid(dogBreedImageList: List<DogBreedImagePresentation>) {
     ) {
         items(dogBreedImageList.size) {
             Card(
-                border = BorderStroke(2.dp, color = MaterialTheme.colors.background),
-                elevation = 15.dp,
+                border = BorderStroke(2.dp, color = MaterialTheme.colorScheme.background),
+                elevation = CardDefaults.cardElevation(10.dp),
             ) {
 
                 LoadImage(
