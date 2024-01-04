@@ -36,7 +36,7 @@ class BreedListUseCaseTest {
                     Result.Success(emptyList<DogBreed>())
                 )
             }
-            getDogBreedsUseCase(Unit)
+            getDogBreedsUseCase()
             coVerify(exactly = 1) { dogBreedsRepository.getAllBreeds() }
         }
 }
