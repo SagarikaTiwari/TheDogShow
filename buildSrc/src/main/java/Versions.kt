@@ -16,7 +16,7 @@ object Versions {
     val retrofit_gson = "2.9.0"
     val hilt = "2.48"
     val viewmodel_ktx = "2.7.0-alpha02"
-    val mockk ="1.13.8"
+    val mockk ="1.12.5"
     val core_testing ="2.0.0"
     val junit_jupiter_version = "5.6.0"
     val coroutines_test = "1.7.3"
