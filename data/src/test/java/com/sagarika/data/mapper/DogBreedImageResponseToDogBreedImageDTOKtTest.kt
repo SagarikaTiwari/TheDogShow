@@ -4,6 +4,7 @@ import com.sagarika.data.dto.DogBreedImageResponse
 import com.sagarika.domain.model.DogBreedImage
 import org.junit.Test
 
+class DogBreedImageResponseToDomainTest{
 @Test
 fun `dogBreedImagesResponse to domain should return empty list`() {
     val dogBreedImageResponse = DogBreedImageResponse(
@@ -34,4 +35,4 @@ fun `dogBreedImagesResponse to domain should return list`() {
     )
     assert(dogBreedImageResponse.toDomain().isNotEmpty())
     assert(dogBreedImageResponse.toDomain() == expected)
-}
+}}

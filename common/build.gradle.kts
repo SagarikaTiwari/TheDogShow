@@ -36,7 +36,6 @@ dependencies {
     //Android Dependencies
     implementation ( Dependencies.appcompat )
     implementation ( Dependencies.google_material )
-
     // Kotlin dependencies
     implementation ( Dependencies.core_ktx )
     implementation ( Dependencies.kotlin_standard_library )

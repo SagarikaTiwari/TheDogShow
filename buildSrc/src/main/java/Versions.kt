@@ -9,7 +9,7 @@ object Versions {
     val appcompat = "1.6.1"
     val google_material = "1.9.0"
     val junit = "4.13.2"
-    val ext_junit = "1.1.5"
+    val ext_junit = "1.1.3"
     val espresso_core= "3.5.1"
     val coroutines = "1.7.3"
     val retrofit = "2.9.0"

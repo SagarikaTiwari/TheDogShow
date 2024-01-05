@@ -33,18 +33,15 @@ import org.junit.runner.RunWith
 @OptIn(ExperimentalCoroutinesApi::class)
 
 class BreedListViewModelTest {
-
     private var getDogBreedsUseCase = mockk<BreedListUseCase>()
     private lateinit var dogBreedViewModel: BreedListViewModel
     private val testDispatcher = UnconfinedTestDispatcher()
-
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         dogBreedViewModel =
             BreedListViewModel(getDogBreedsUseCase)
     }
-
     @Test
     fun `GIVEN breed list data WHEN LoadData ViewIntent sent THEN viewState contains list of breeds`() =
         runTest {
