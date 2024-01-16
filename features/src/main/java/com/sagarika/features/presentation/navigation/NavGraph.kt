@@ -8,7 +8,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.sagarika.features.ecommerce.presentation.navigation.Screens
 import com.sagarika.features.presentation.constants.breedImages
 import com.sagarika.features.presentation.constants.breedList
 import com.sagarika.features.presentation.ui.common.BaseScreen
@@ -55,10 +54,12 @@ fun NavGraph(
                 showBackButton = true,
                 onBackClicked = {navController.popBackStack()},
                 content = {
-                    BreedGalleryScreen(
-                        breedName = breedName!!,
-                        breedGalleryViewModel
-                    )
+                    if (breedName != null) {
+                        BreedGalleryScreen(
+                            breedName = breedName,
+                            breedGalleryViewModel
+                        )
+                    }
                 })
         }
     }

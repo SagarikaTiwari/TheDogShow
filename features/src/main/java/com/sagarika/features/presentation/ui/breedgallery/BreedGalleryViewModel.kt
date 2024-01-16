@@ -46,21 +46,18 @@ class BreedGalleryViewModel @Inject constructor(
 
     private fun fetchBreedImages(breedName: String) {
         _dogBreedImagesState.value = DogBreedImagesState.Loading
-
         viewModelScope.launch {
-            breedImagesUseCase(breedName).collect() {
-                when (it) {
+            breedImagesUseCase(breedName).collect() { result ->
+                when (result) {
                     is Result.Success -> {
-                        it.data?.let { it1 -> handleSuccess(it1) }
+                        result.data?.let {  handleSuccess(it) }
                     }
-
                     is Result.Error -> {
-                        handleError(it.failure)
+                        handleError(result.failure)
                     }
                 }
             }
         }
-
     }
 
     private fun fetchDogSubBreedImages(breedName: String, subBreedName: String) {
@@ -69,14 +66,15 @@ class BreedGalleryViewModel @Inject constructor(
         viewModelScope.launch {
             subBreedUseCase(
                 DogSubBreedUseCase.DogSubBreedParams(breedName, subBreedName)
-            ).collect() {
-                when (it) {
+            ).collect() { result ->
+                when (result) {
                     is Result.Success -> {
-                        it.data?.let { it1 -> handleSuccess(it1) }
+                        result.data?.let {
+                            handleSuccess(it)
+                        }
                     }
-
                     is Result.Error -> {
-                        handleError(it.failure)
+                        handleError(result.failure)
                     }
                 }
             }

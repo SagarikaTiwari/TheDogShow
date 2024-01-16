@@ -17,7 +17,9 @@ import com.sagarika.features.presentation.model.DogBreedPresentation
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -34,20 +36,20 @@ class BreedListViewModel @Inject constructor(
     private val _viewState =
         MutableStateFlow<BreedListViewState>(BreedListViewState.Loading)
     val viewState: StateFlow<BreedListViewState> = _viewState
-    private val _sideEffect = Channel<BreedListSideEffect>()
-    val sideEffect: Flow<BreedListSideEffect>
-        get() = _sideEffect.receiveAsFlow()
+    private val _sideEffect = MutableSharedFlow<BreedListSideEffect>()
+    val sideEffect: SharedFlow<BreedListSideEffect>
+        get() = _sideEffect
 
 
     private fun showBreedGallery(breedName: String) {
         viewModelScope.launch {
-            _sideEffect.send(BreedListSideEffect.ShowGallery(breedName))
-        }
+            _sideEffect.emit(BreedListSideEffect.ShowGallery(breedName))
+         }
     }
 
     private fun showSubBreedGallery(breedName: String, subBreed: String) {
         viewModelScope.launch {
-            _sideEffect.send(BreedListSideEffect.ShowSubBreedGallery(breedName, subBreed))
+            _sideEffect.emit(BreedListSideEffect.ShowSubBreedGallery(breedName, subBreed))
         }
     }
 

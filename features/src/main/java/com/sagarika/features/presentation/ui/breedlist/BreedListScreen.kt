@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.sagarika.features.presentation.constants.errorMsg
 import com.sagarika.features.presentation.model.DogBreedPresentation
 import com.sagarika.features.presentation.model.DogSubBreedPresentation
 import com.sagarika.features.presentation.ui.customcomposables.CustomText
@@ -57,6 +58,7 @@ fun BreedList(breedListViewModel: BreedListViewModel, callback: (breedName: Stri
     })
     val breedListState: BreedListViewState by breedListViewModel.viewState.collectAsState()
     when (breedListState) {
+
         is BreedListViewState.Loading ->
             LoadingIndicator()
 
@@ -64,9 +66,18 @@ fun BreedList(breedListViewModel: BreedListViewModel, callback: (breedName: Stri
             ErrorViewInABox()
         }
 
+        is BreedListViewState.NoDogBreeds -> {
+            CustomText(
+                com.sagarika.features.presentation.constants.emptyListMsg,
+                Modifier
+                    .fillMaxWidth(1f)
+                    .padding(10.dp),
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+
         is BreedListViewState.DogBreeds -> {
             val breedList = (breedListState as BreedListViewState.DogBreeds).dogBreeds
-
             LazyColumn(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.SpaceBetween,
@@ -87,7 +98,6 @@ fun BreedList(breedListViewModel: BreedListViewModel, callback: (breedName: Stri
                                     breedListViewModel = breedListViewModel
                                 )
 
-
                             }
 
                         }
@@ -97,7 +107,6 @@ fun BreedList(breedListViewModel: BreedListViewModel, callback: (breedName: Stri
             }
         }
 
-        else -> {}
 
     }
 }

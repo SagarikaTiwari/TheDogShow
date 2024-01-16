@@ -23,9 +23,7 @@ fun BreedGalleryScreen(
     breedName: String,
     breedGalleryViewModel: BreedGalleryViewModel,
 ) {
-
     val breedSubbreedList = breedName.split("$")
-
     LaunchedEffect(true) {
         if (breedSubbreedList[1].length > 1) {
             breedGalleryViewModel.sendIntent(
@@ -34,10 +32,8 @@ fun BreedGalleryScreen(
                     breedSubbreedList[1]
                 )
             )
-
         } else {
             breedGalleryViewModel.sendIntent(BreedGalleryViewIntent.LoadBreedImage(breedSubbreedList[0]))
-
         }
     }
 
@@ -45,16 +41,15 @@ fun BreedGalleryScreen(
         is DogBreedImagesState.Loading -> {
             LoadingIndicator()
         }
-
         is DogBreedImagesState.Error -> {
             ErrorViewInABox()
         }
-
+        is DogBreedImagesState.NoDogBreedImages -> {
+            PhotoGrid(emptyList())
+        }
         is DogBreedImagesState.DogBreedImages -> {
             PhotoGrid(viewState.dogBreedImages)
         }
-
-        else -> {}
     }
 
 }

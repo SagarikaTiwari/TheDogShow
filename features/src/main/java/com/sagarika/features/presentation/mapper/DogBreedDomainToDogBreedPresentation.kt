@@ -11,14 +11,18 @@ fun DogBreed.toPresentation(): DogBreedPresentation {
         DogSubBreedPresentation(
             breedNameInitial = dogBreed.name[0]
                 .uppercaseChar().toString(),
-            parentBreedName = this.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(java.util.Locale.getDefault()) else it.toString() },
-            breedName = dogBreed.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(java.util.Locale.getDefault()) else it.toString() }
+            parentBreedName = formatBreedName(this.name),
+            breedName = formatBreedName(dogBreed.name)
         )
     }
     return DogBreedPresentation(
         breedNameInitial = this.name[0].uppercaseChar().toString(),
-        breedName = this.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(java.util.Locale.getDefault()) else it.toString() },
+        breedName = formatBreedName(this.name),
         subBreeds = subBreedsPresentation
     )
+}
+
+private fun formatBreedName(name: String): String {
+    return name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(java.util.Locale.getDefault()) else it.toString() }
 }
 
