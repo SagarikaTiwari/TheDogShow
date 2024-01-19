@@ -67,13 +67,3 @@ fun MyAppBar(title: String,  showBackButton: Boolean = false,  onBackClicked: ((
 
     )
 }
-
-@Preview(showBackground = true)
-@Composable
-fun BaseScreenPreview(){
-MaterialTheme{
-    BaseScreen(title = "The Dog Show", showBackButton = true){
-        Text("Hello")
-    }
-}
-}

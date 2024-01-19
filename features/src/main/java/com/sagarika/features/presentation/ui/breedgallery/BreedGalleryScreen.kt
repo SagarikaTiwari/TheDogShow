@@ -24,7 +24,7 @@ fun BreedGalleryScreen(
     breedGalleryViewModel: BreedGalleryViewModel,
 ) {
     val breedSubbreedList = breedName.split("$")
-    LaunchedEffect(true) {
+    LaunchedEffect(1) {
         if (breedSubbreedList[1].length > 1) {
             breedGalleryViewModel.sendIntent(
                 BreedGalleryViewIntent.LoadSubBreedImage(

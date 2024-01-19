@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.sagarika.features.presentation.constants.emptyListMsg
 import com.sagarika.features.presentation.constants.errorMsg
 import com.sagarika.features.presentation.model.DogBreedPresentation
 import com.sagarika.features.presentation.model.DogSubBreedPresentation
@@ -43,7 +44,7 @@ fun BreedListScreen(
 
 @Composable
 fun BreedList(breedListViewModel: BreedListViewModel, callback: (breedName: String) -> Unit) {
-    LaunchedEffect(key1 = true, block = {
+    LaunchedEffect(key1 = 1, block = {
         breedListViewModel.sendIntent(
             BreedListViewIntent.LoadData
         )
@@ -68,7 +69,7 @@ fun BreedList(breedListViewModel: BreedListViewModel, callback: (breedName: Stri
 
         is BreedListViewState.NoDogBreeds -> {
             CustomText(
-                com.sagarika.features.presentation.constants.emptyListMsg,
+                emptyListMsg,
                 Modifier
                     .fillMaxWidth(1f)
                     .padding(10.dp),
