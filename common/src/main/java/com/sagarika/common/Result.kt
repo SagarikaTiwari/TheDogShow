@@ -1,15 +1,9 @@
 package com.sagarika.common
 
-sealed class Result<out R> {
-    data class Success<out T>(val data: T) : Result<T>() // Status success and data of the result
-    data class Error(val failure: Failure) :
-        Result<Nothing>() // Status Error an error message
+import java.lang.IndexOutOfBoundsException
 
-    // string method to display a result for debugging
-    override fun toString(): String {
-        return when (this) {
-            is Success<*> -> "Success[data=$data]"
-            is Error -> "Error[exception=$failure]"
-        }
-    }
+sealed class Result<out T> {
+    data class Success<out T>(val data: T) : Result<T>() // Status success and data of the result
+    data class Error(val exception: Throwable) :
+        Result<Nothing>() // Status Error an error message
 }

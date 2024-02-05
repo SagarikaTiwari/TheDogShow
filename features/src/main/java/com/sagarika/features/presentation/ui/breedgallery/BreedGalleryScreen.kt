@@ -37,7 +37,7 @@ fun BreedGalleryScreen(
         }
     }
 
-    when (val viewState = breedGalleryViewModel.dogBreedImagesState.collectAsState().value) {
+    when (val viewState = breedGalleryViewModel.viewState.collectAsState().value) {
         is DogBreedImagesState.Loading -> {
             LoadingIndicator()
         }

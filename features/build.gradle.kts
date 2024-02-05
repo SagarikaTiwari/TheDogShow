@@ -39,9 +39,8 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = Versions.kotlinCompilerExtensionVersion
     }
-
-
 }
+
 
 dependencies {
     implementation(project(mapOf("path" to ":domain")))
@@ -71,6 +70,7 @@ dependencies {
     implementation(Dependencies.coil_compose)
     implementation(Dependencies.coil_svg)
     implementation(Dependencies.navigation_compose)
+    implementation(Dependencies.compose_lifecycle)
     // Test dependencies
     testImplementation(TestDependencies.junit)
     testImplementation(TestDependencies.mockk)

@@ -4,6 +4,7 @@ import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.sagarika.domain.usecases.BreedListUseCase
 import com.sagarika.features.presentation.constants.breedList
+import com.sagarika.features.presentation.mapper.DogBreedDomainToDogBreedPresentation
 import com.sagarika.features.presentation.model.DogBreedPresentation
 import com.sagarika.features.presentation.model.DogSubBreedPresentation
 import com.sagarika.features.presentation.ui.breedlist.fakes.FakeData
@@ -24,6 +25,7 @@ class BreedListScreenSnapShotTest {
     private val testDispatcher = StandardTestDispatcher()
     private var getDogBreedsUseCase = mockk<BreedListUseCase>()
     private lateinit var dogBreedViewModel: BreedListViewModel
+    private val dogBreedDomainToDogBreedPresentation = mockk<DogBreedDomainToDogBreedPresentation>()
 
     @get: Rule
     val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
@@ -32,7 +34,7 @@ class BreedListScreenSnapShotTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         dogBreedViewModel =
-            BreedListViewModel(getDogBreedsUseCase)
+            BreedListViewModel(getDogBreedsUseCase, dogBreedDomainToDogBreedPresentation)
     }
 
     @After

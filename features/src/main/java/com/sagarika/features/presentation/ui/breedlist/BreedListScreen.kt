@@ -20,11 +20,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sagarika.features.presentation.constants.emptyListMsg
 import com.sagarika.features.presentation.constants.errorMsg
 import com.sagarika.features.presentation.model.DogBreedPresentation
@@ -44,20 +46,9 @@ fun BreedListScreen(
 
 @Composable
 fun BreedList(breedListViewModel: BreedListViewModel, callback: (breedName: String) -> Unit) {
-    LaunchedEffect(key1 = 1, block = {
-        breedListViewModel.sendIntent(
-            BreedListViewIntent.LoadData
-        )
-        breedListViewModel.sideEffect.collect {
-            if (it is BreedListSideEffect.ShowGallery) {
-                callback(it.breedName.lowercase() + "$")
-            }
-            if (it is BreedListSideEffect.ShowSubBreedGallery) {
-                callback(it.breedName.lowercase() + "$" + it.subBreed.lowercase())
-            }
-        }
-    })
-    val breedListState: BreedListViewState by breedListViewModel.viewState.collectAsState()
+
+
+    val breedListState: BreedListViewState by breedListViewModel.viewState.collectAsStateWithLifecycle()
     when (breedListState) {
 
         is BreedListViewState.Loading ->
@@ -110,6 +101,18 @@ fun BreedList(breedListViewModel: BreedListViewModel, callback: (breedName: Stri
 
 
     }
+
+
+    LaunchedEffect(key1 = 1, block = {
+        breedListViewModel.sideEffect.collect {
+            if (it is BreedListSideEffect.ShowGallery) {
+                callback(it.breedName.lowercase() + "$")
+            }
+            if (it is BreedListSideEffect.ShowSubBreedGallery) {
+                callback(it.breedName.lowercase() + "$" + it.subBreed.lowercase())
+            }
+        }
+    })
 }
 
 @Composable

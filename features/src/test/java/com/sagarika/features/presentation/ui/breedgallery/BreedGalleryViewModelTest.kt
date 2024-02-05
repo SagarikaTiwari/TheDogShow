@@ -1,10 +1,10 @@
 package com.sagarika.features.presentation.ui.breedgallery
 
-import com.sagarika.common.Failure
 import com.sagarika.domain.usecases.BreedImagesUseCase
 import com.sagarika.domain.usecases.DogSubBreedUseCase
 import com.sagarika.features.presentation.constants.errorMsg
 import com.sagarika.features.presentation.constants.servererrorMsg
+import com.sagarika.features.presentation.mapper.DogBreedImageDomainToDogBreedImagePresentation
 import com.sagarika.features.presentation.model.DogBreedImagePresentation
 import com.sagarika.features.presentation.ui.breedgallery.fakes.FakeGalleryData
 import io.mockk.coEvery
@@ -15,9 +15,8 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.Assert.*
-
 import org.junit.After
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
@@ -31,6 +30,8 @@ class BreedGalleryViewModelTest {
     private lateinit var breedName: String
     private lateinit var subBreedName: String
     private lateinit var dogSubBreedParams: DogSubBreedUseCase.DogSubBreedParams
+    private val dogBreedImageDomainToDogBreedImagePresentation =
+        mockk<DogBreedImageDomainToDogBreedImagePresentation>()
 
     @Before
     fun setUp() {
@@ -38,7 +39,11 @@ class BreedGalleryViewModelTest {
         subBreedName = "afgan"
         dogSubBreedParams = DogSubBreedUseCase.DogSubBreedParams(breedName, subBreedName)
         Dispatchers.setMain(testDispatcher)
-        breedGalleryViewModel = BreedGalleryViewModel(breedImagesUseCase, subBreedUseCase)
+        breedGalleryViewModel = BreedGalleryViewModel(
+            breedImagesUseCase,
+            subBreedUseCase,
+            dogBreedImageDomainToDogBreedImagePresentation
+        )
     }
 
     @After
@@ -49,17 +54,17 @@ class BreedGalleryViewModelTest {
     @Test
     fun `Given BreedGallery data When Intent is LoadBreedImage Then viewState contains list of Image Urls to Show Gallery`() =
         runTest {
+
+            val breedGalleryData = FakeGalleryData.getBreedGalleryWithSuccess()
             coEvery {
                 breedImagesUseCase(breedName)
-            } returns FakeGalleryData.getBreedGalleryWithSuccess()
+            } returns breedGalleryData
+
             breedGalleryViewModel.sendIntent(BreedGalleryViewIntent.LoadBreedImage(breedName))
+
             assertEquals(
-                breedGalleryViewModel.dogBreedImagesState.value,
-                DogBreedImagesState.DogBreedImages(
-                    listOf(
-                        DogBreedImagePresentation("https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg")
-                    )
-                )
+                breedGalleryViewModel.viewState.value,
+                breedGalleryData
             )
         }
 
@@ -71,7 +76,7 @@ class BreedGalleryViewModelTest {
             } returns FakeGalleryData.getEmptyBreedGallery()
             breedGalleryViewModel.sendIntent(BreedGalleryViewIntent.LoadBreedImage(breedName))
             assertEquals(
-                breedGalleryViewModel.dogBreedImagesState.value,
+                breedGalleryViewModel.viewState.value,
                 DogBreedImagesState.NoDogBreedImages
             )
         }
@@ -81,26 +86,14 @@ class BreedGalleryViewModelTest {
         runTest {
             coEvery {
                 breedImagesUseCase(breedName)
-            } returns FakeGalleryData.getBreedGalleryWithDataError()
+            } returns FakeGalleryData.getException()
             breedGalleryViewModel.sendIntent(BreedGalleryViewIntent.LoadBreedImage(breedName))
             assertEquals(
-                breedGalleryViewModel.dogBreedImagesState.value,
+                breedGalleryViewModel.viewState.value,
                 DogBreedImagesState.Error(errorMsg)
             )
         }
 
-    @Test
-    fun `Given server error When Intent is LoadBreedImage Then viewState is set to error with server error message`() =
-        runTest {
-            coEvery {
-                breedImagesUseCase(breedName)
-            } returns FakeGalleryData.getBreedGalleryWithServerError()
-            breedGalleryViewModel.sendIntent(BreedGalleryViewIntent.LoadBreedImage(breedName))
-            assertEquals(
-                breedGalleryViewModel.dogBreedImagesState.value,
-                DogBreedImagesState.Error(servererrorMsg)
-            )
-        }
 
     @Test
     fun `Given BreedGallery data When Intent is LoadSubBreedImage Then viewState contains list of Image Urls to Show Gallery`() =
@@ -115,7 +108,7 @@ class BreedGalleryViewModelTest {
                 )
             )
             assertEquals(
-                breedGalleryViewModel.dogBreedImagesState.value,
+                breedGalleryViewModel.viewState.value,
                 DogBreedImagesState.DogBreedImages(
                     listOf(
                         DogBreedImagePresentation("https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg")
@@ -137,7 +130,7 @@ class BreedGalleryViewModelTest {
                 )
             )
             assertEquals(
-                breedGalleryViewModel.dogBreedImagesState.value,
+                breedGalleryViewModel.viewState.value,
                 DogBreedImagesState.NoDogBreedImages
             )
         }
@@ -147,7 +140,7 @@ class BreedGalleryViewModelTest {
         runTest {
             coEvery {
                 subBreedUseCase(dogSubBreedParams)
-            } returns FakeGalleryData.getBreedGalleryWithDataError()
+            } returns FakeGalleryData.getException()
             breedGalleryViewModel.sendIntent(
                 BreedGalleryViewIntent.LoadSubBreedImage(
                     breedName,
@@ -155,28 +148,9 @@ class BreedGalleryViewModelTest {
                 )
             )
             assertEquals(
-                breedGalleryViewModel.dogBreedImagesState.value,
+                breedGalleryViewModel.viewState.value,
                 DogBreedImagesState.Error(errorMsg)
             )
         }
-
-    @Test
-    fun `Given server error When Intent is LoadSubBreedImage Then viewState is set to server error with message`() =
-        runTest {
-            coEvery {
-                subBreedUseCase(dogSubBreedParams)
-            } returns FakeGalleryData.getBreedGalleryWithServerError()
-            breedGalleryViewModel.sendIntent(
-                BreedGalleryViewIntent.LoadSubBreedImage(
-                    breedName,
-                    subBreedName
-                )
-            )
-            assertEquals(
-                breedGalleryViewModel.dogBreedImagesState.value,
-                DogBreedImagesState.Error(servererrorMsg)
-            )
-        }
-
 
 }

@@ -10,7 +10,7 @@ class DogSubBreedUseCase @Inject constructor(private val dogBreedImagesRepositor
 
     data class DogSubBreedParams(val breedName: String, val subBreedName: String)
 
-    operator fun invoke(params: DogSubBreedParams): Flow<Result<List<DogBreedImage>?>> {
+    suspend operator fun invoke(params: DogSubBreedParams): Result<List<DogBreedImage>> {
         return dogBreedImagesRepository.getDogSubBreedImages(params.breedName, params.subBreedName)
     }
 }

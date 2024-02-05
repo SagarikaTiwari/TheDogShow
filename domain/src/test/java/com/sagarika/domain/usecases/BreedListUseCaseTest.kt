@@ -31,11 +31,9 @@ class BreedListUseCaseTest {
     @Test
     fun `Given repository returns success When breedlistusecase is called Then invoke function should get called from repository`() =
         runTest {
-            coEvery { dogBreedsRepository.getAllBreeds() } returns flow {
-                emit(
+            coEvery { dogBreedsRepository.getAllBreeds() } returns
                     Result.Success(emptyList<DogBreed>())
-                )
-            }
+
             getDogBreedsUseCase()
             coVerify(exactly = 1) { dogBreedsRepository.getAllBreeds() }
         }

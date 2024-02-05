@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 
 interface DogBreedRepository {
-      fun getAllBreeds(): Flow<Result<List<DogBreed>>>
+      suspend fun getAllBreeds(): Result<List<DogBreed>>
 }

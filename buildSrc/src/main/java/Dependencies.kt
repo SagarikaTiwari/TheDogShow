@@ -23,6 +23,7 @@ object Dependencies {
     val compose_tooling = "androidx.compose.ui:ui-tooling"
     val compose_livedata = "androidx.compose.runtime:runtime-livedata"
     val compose_material = "androidx.compose.material3:material3"
+    val compose_lifecycle = "androidx.lifecycle:lifecycle-runtime-compose:${Versions.coil_compose}"
     val coil_compose = "io.coil-kt:coil-compose:${Versions.coil_compose}"
     val coil_svg = "io.coil-kt:coil-svg:2.0.0"
     val logging_interceptor =

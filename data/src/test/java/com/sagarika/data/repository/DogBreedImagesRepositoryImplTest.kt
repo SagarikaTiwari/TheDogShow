@@ -1,18 +1,19 @@
 package com.sagarika.data.repository
 
-import com.sagarika.common.Failure
-import com.sagarika.data.dto.DogBreedImageResponse
-import com.sagarika.data.mapper.toDomain
+import com.sagarika.common.Result
+import com.sagarika.data.FakeResponse
+import com.sagarika.data.mapper.DogBreedImageResponseToDogBreedImageDTO
 import com.sagarika.data.remote.ApiService
 import io.mockk.coEvery
-import io.mockk.every
+import io.mockk.coVerify
 import io.mockk.mockk
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import retrofit2.Response
 
 
 @ExperimentalCoroutinesApi
@@ -20,169 +21,84 @@ class DogBreedImagesRepositoryTest {
     private lateinit var dogBreedImagesRepository: DogBreedImagesRepositoryImpl
     private lateinit var breedName: String
     private lateinit var subBreedName: String
-
-
     private var apiService = mockk<ApiService>()
-
-    private var dogBreedImageApiResponse = mockk<Response<DogBreedImageResponse>>()
+    private val dogBreedImageResponseToDogBreedImageDTO =
+        mockk<DogBreedImageResponseToDogBreedImageDTO>()
 
     @Before
     fun setUp() {
         breedName = "hound"
         subBreedName = "basset"
-        dogBreedImagesRepository = DogBreedImagesRepositoryImpl(apiService)
+        dogBreedImagesRepository = DogBreedImagesRepositoryImpl(
+            apiService,
+            Dispatchers.IO,
+            dogBreedImageResponseToDogBreedImageDTO
+        )
     }
 
     @Test
-    fun `Given null response when getDogBreedImages is called Then repository should return data error`() =
+    fun `Given exception as response when getDogBreedImages is called Then repository should return data error`() =
         runTest {
-            every { dogBreedImageApiResponse.body() } returns null
-            every { dogBreedImageApiResponse.isSuccessful } returns true
-            coEvery { apiService.getBreedImages(breedName) } returns dogBreedImageApiResponse
+            val exception = Exception(ERROR)
+            coEvery { apiService.getBreedImages(breedName) } throws exception
+            val result = dogBreedImagesRepository.getDogBreedImages(breedName)
+            assertTrue(result is Result.Error)
+            assertEquals(exception, (result as Result.Error).exception)
+         }
 
-            val dogBreeds = dogBreedImagesRepository.getDogBreedImages(breedName)
-            dogBreeds.collect { a ->
-                assert(a == com.sagarika.common.Result.Error(Failure.DataError))
-            }
-        }
-
-    @Test
-    fun `Given response is not successful when getDogBreedImages is called Then repository should return server error`() =
-        runTest {
-            every { dogBreedImageApiResponse.isSuccessful } returns false
-            coEvery { apiService.getBreedImages(breedName) } returns dogBreedImageApiResponse
-
-            val dogBreeds = dogBreedImagesRepository.getDogBreedImages(breedName)
-            dogBreeds.collect { a ->
-                assert(a == com.sagarika.common.Result.Error(Failure.ServerError))
-            }
-        }
-
-    @Test
-    fun `Given status is failure response when getDogBreedImages is called Then repository should return data error`() =
-        runTest {
-            val dogBreedImageResponse = DogBreedImageResponse(
-                status = "failure",
-                message =
-                listOf()
-            )
-
-            every { dogBreedImageApiResponse.isSuccessful } returns true
-            every { dogBreedImageApiResponse.body() } returns dogBreedImageResponse
-            coEvery { apiService.getBreedImages(breedName) } returns dogBreedImageApiResponse
-
-            val dogBreeds = dogBreedImagesRepository.getDogBreedImages(breedName)
-            dogBreeds.collect { a ->
-                assert(a == com.sagarika.common.Result.Error(Failure.DataError))
-            }
-        }
 
     @Test
     fun `Given successful response when getDogBreedImages is called Then repository should return breed images list`() =
         runTest {
-            val dogBreedImageResponse = DogBreedImageResponse(
-                status = "success",
-                message =
-                listOf(
-                    "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg",
-                    "https://images.dog.ceo/breeds/hound-afghan/n02088094_1007.jpg"
-                )
-            )
-
-            every { dogBreedImageApiResponse.isSuccessful } returns true
-            every { dogBreedImageApiResponse.body() } returns dogBreedImageResponse
-            coEvery { apiService.getBreedImages(breedName) } returns dogBreedImageApiResponse
-
-            val dogBreeds = dogBreedImagesRepository.getDogBreedImages(breedName)
-            dogBreeds.collect { a ->
-                assert(a == com.sagarika.common.Result.Success(dogBreedImageResponse.toDomain()))
-            }
+            val response = FakeResponse.getBreedImages()
+            val mappedResponse = FakeResponse.getBreedImagesMapped()
+            coEvery { apiService.getBreedImages(breedName) } returns response
+            coEvery { dogBreedImageResponseToDogBreedImageDTO.map(response) } returns mappedResponse
+            val res = dogBreedImagesRepository.getDogBreedImages(breedName)
+            assert(res == Result.Success(dogBreedImageResponseToDogBreedImageDTO.map(response)))
         }
 
     @Test
-    fun `Given null response when getDogSubBreedImages is called Then repository should return data error`() =
+    fun `Given exception as response when getDogSubBreedImages is called Then repository should return data error`() =
         runTest {
-            every { dogBreedImageApiResponse.body() } returns null
-            every { dogBreedImageApiResponse.isSuccessful } returns true
+            val exception = Exception(ERROR)
             coEvery {
                 apiService.fetchDogSubBreedImages(
                     breedName,
                     subBreedName
                 )
-            } returns dogBreedImageApiResponse
+            } throws exception
 
-            val dogBreeds = dogBreedImagesRepository.getDogSubBreedImages(breedName, subBreedName)
-            dogBreeds.collect { a ->
-                assert(a == com.sagarika.common.Result.Error(Failure.DataError))
-            }
-        }
+            val result = dogBreedImagesRepository.getDogSubBreedImages(breedName, subBreedName)
 
-    @Test
-    fun `Given response is not successful when getDogSubBreedImages is called Then repository should return server error`() =
-        runTest {
-            every { dogBreedImageApiResponse.isSuccessful } returns false
-            coEvery {
-                apiService.fetchDogSubBreedImages(
-                    breedName,
-                    subBreedName
-                )
-            } returns dogBreedImageApiResponse
-
-            val dogBreeds = dogBreedImagesRepository.getDogSubBreedImages(breedName, subBreedName)
-            dogBreeds.collect { a ->
-                assert(a == com.sagarika.common.Result.Error(Failure.ServerError))
-            }
-        }
-
-    @Test
-    fun `Given status is failure response when getDogSubBreedImages is called Then repository should return data error`() =
-        runTest {
-
-            val dogBreedImageResponse = DogBreedImageResponse(
-                status = "failure",
-                message =
-                listOf()
-            )
-
-            every { dogBreedImageApiResponse.isSuccessful } returns true
-            every { dogBreedImageApiResponse.body() } returns dogBreedImageResponse
-            coEvery {
-                apiService.fetchDogSubBreedImages(
-                    breedName,
-                    subBreedName
-                )
-            } returns dogBreedImageApiResponse
-
-            val dogBreeds = dogBreedImagesRepository.getDogSubBreedImages(breedName, subBreedName)
-            dogBreeds.collect { a ->
-                assert(a == com.sagarika.common.Result.Error(Failure.DataError))
-            }
-        }
+            assertTrue(result is Result.Error)
+            assertEquals(exception, (result as Result.Error).exception)
+         }
 
     @Test
     fun `Given successful response when getDogSubBreedImages is called Then repository should return breed images list`() =
         runTest {
-            val dogBreedImageResponse = DogBreedImageResponse(
-                status = "success",
-                message =
-                listOf(
-                    "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg",
-                    "https://images.dog.ceo/breeds/hound-afghan/n02088094_1007.jpg"
-                )
-            )
-
-            every { dogBreedImageApiResponse.isSuccessful } returns true
-            every { dogBreedImageApiResponse.body() } returns dogBreedImageResponse
+            val response = FakeResponse.getBreedImages()
+            val mappedResponse = FakeResponse.getBreedImagesMapped()
             coEvery {
                 apiService.fetchDogSubBreedImages(
                     breedName,
                     subBreedName
                 )
-            } returns dogBreedImageApiResponse
+            } returns response
 
-            val dogBreeds = dogBreedImagesRepository.getDogSubBreedImages(breedName, subBreedName)
-            dogBreeds.collect { a ->
-                assert(a == com.sagarika.common.Result.Success(dogBreedImageResponse.toDomain()))
-            }
+            coEvery { dogBreedImageResponseToDogBreedImageDTO.map(response) } returns mappedResponse
+
+            val result = dogBreedImagesRepository.getDogSubBreedImages(breedName, subBreedName)
+            assert(
+                result == com.sagarika.common.Result.Success(
+                    dogBreedImageResponseToDogBreedImageDTO.map(response)
+                )
+            )
+
         }
+
+    private companion object {
+        const val ERROR = "Error"
+    }
 }

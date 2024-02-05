@@ -2,10 +2,13 @@ package com.sagarika.data.mapper
 
 import com.sagarika.data.dto.DogBreedImageResponse
 import com.sagarika.domain.model.DogBreedImage
+import javax.inject.Inject
 
 
-fun DogBreedImageResponse.toDomain(): List<DogBreedImage> {
-    return this.message.map {
-        DogBreedImage(imageUrl = it)
+class DogBreedImageResponseToDogBreedImageDTO @Inject constructor() {
+    fun map(dogBreedImageResponse: DogBreedImageResponse): List<DogBreedImage> {
+        return dogBreedImageResponse.message.map {
+            DogBreedImage(imageUrl = it)
+        }
     }
 }

@@ -8,7 +8,7 @@ import com.sagarika.features.presentation.ui.base.ViewState
 
 
 sealed interface BreedListViewState: ViewState {
-    data object Loading : BreedListViewState
+     object Loading : BreedListViewState
     data class Error( val errorMessage: String) : BreedListViewState
     data class DogBreeds(val dogBreeds: List<DogBreedPresentation>) : BreedListViewState
     data object NoDogBreeds : BreedListViewState

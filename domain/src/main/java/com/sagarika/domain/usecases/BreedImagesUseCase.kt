@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class BreedImagesUseCase @Inject constructor(private val dogBreedImagesRepository: DogBreedImagesRepository)  {
 
-     operator fun invoke(params: String): Flow<Result<List<DogBreedImage>?>> {
+     suspend operator fun invoke(params: String): Result<List<DogBreedImage>> {
         return dogBreedImagesRepository.getDogBreedImages(params)
     }
 }

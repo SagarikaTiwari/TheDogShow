@@ -1,14 +1,13 @@
 package com.sagarika.features.presentation.ui.breedgallery
 
 import androidx.lifecycle.viewModelScope
-import com.sagarika.common.Failure
-import com.sagarika.common.Result
+ import com.sagarika.common.Result
 import com.sagarika.domain.model.DogBreedImage
- import com.sagarika.domain.usecases.BreedImagesUseCase
+import com.sagarika.domain.usecases.BreedImagesUseCase
 import com.sagarika.domain.usecases.DogSubBreedUseCase
 import com.sagarika.features.presentation.constants.errorMsg
 import com.sagarika.features.presentation.constants.servererrorMsg
-import com.sagarika.features.presentation.mapper.toPresentation
+import com.sagarika.features.presentation.mapper.DogBreedImageDomainToDogBreedImagePresentation
 import com.sagarika.features.presentation.model.DogBreedImagePresentation
 import com.sagarika.features.presentation.ui.base.BaseViewModel
 import com.sagarika.features.presentation.ui.breedlist.BreedListViewState
@@ -24,13 +23,11 @@ import javax.inject.Inject
 @HiltViewModel
 class BreedGalleryViewModel @Inject constructor(
     private val breedImagesUseCase: BreedImagesUseCase,
-    private val subBreedUseCase:  DogSubBreedUseCase ,
+    private val subBreedUseCase: DogSubBreedUseCase,
+    private val dogBreedImageDomainToDogBreedImagePresentation: DogBreedImageDomainToDogBreedImagePresentation
 ) :
     BaseViewModel<DogBreedImagesState, BreedGalleryViewIntent, BreedGallerySideEffect>() {
 
-    private val _dogBreedImagesState =
-        MutableStateFlow<DogBreedImagesState>(DogBreedImagesState.Loading)
-    val dogBreedImagesState: StateFlow<DogBreedImagesState> = _dogBreedImagesState
 
     override fun sendIntent(intent: BreedGalleryViewIntent) {
         when (intent) {
@@ -45,63 +42,56 @@ class BreedGalleryViewModel @Inject constructor(
     }
 
     private fun fetchBreedImages(breedName: String) {
-        _dogBreedImagesState.value = DogBreedImagesState.Loading
         viewModelScope.launch {
-            breedImagesUseCase(breedName).collect() { result ->
-                when (result) {
-                    is Result.Success -> {
-                        result.data?.let {  handleSuccess(it) }
-                    }
-                    is Result.Error -> {
-                        handleError(result.failure)
-                    }
+
+            when (val result = breedImagesUseCase(breedName)) {
+                is Result.Success -> {
+                    result.data?.let { handleSuccess(it) }
+                }
+
+                is Result.Error -> {
+                    _viewState.emit(DogBreedImagesState.Error(errorMsg))
                 }
             }
         }
+
     }
 
     private fun fetchDogSubBreedImages(breedName: String, subBreedName: String) {
 
-        _dogBreedImagesState.value = DogBreedImagesState.Loading
         viewModelScope.launch {
-            subBreedUseCase(
+            when (val result = subBreedUseCase(
                 DogSubBreedUseCase.DogSubBreedParams(breedName, subBreedName)
-            ).collect() { result ->
-                when (result) {
-                    is Result.Success -> {
-                        result.data?.let {
-                            handleSuccess(it)
-                        }
-                    }
-                    is Result.Error -> {
-                        handleError(result.failure)
+            )) {
+                is Result.Success -> {
+                    result.data?.let {
+                        handleSuccess(it)
                     }
                 }
+
+                is Result.Error -> {
+                    _viewState.emit(DogBreedImagesState.Error(errorMsg))
+                }
             }
+
         }
 
     }
 
-    private fun handleError(failure: Failure) {
-        when (failure) {
-            is Failure.DataError -> _dogBreedImagesState.value = DogBreedImagesState.Error(errorMsg)
-            is Failure.ServerError -> _dogBreedImagesState.value = DogBreedImagesState.Error(servererrorMsg)
-        }
-    }
 
 
-    private fun handleSuccess(dogBreedImages: List<DogBreedImage>) {
+    private suspend fun handleSuccess(dogBreedImages: List<DogBreedImage>) {
         if (dogBreedImages.isEmpty()) {
-            _dogBreedImagesState.value = DogBreedImagesState.NoDogBreedImages
+            _viewState.emit(DogBreedImagesState.NoDogBreedImages)
         } else {
-            _dogBreedImagesState.value =
+            _viewState.emit(
                 DogBreedImagesState.DogBreedImages(dogBreedImages.map {
-                    it.toPresentation()
+                    dogBreedImageDomainToDogBreedImagePresentation.map(it)
                 })
+            )
         }
     }
 
-
-
+    override fun createInitialState() = DogBreedImagesState.Loading
 
 }

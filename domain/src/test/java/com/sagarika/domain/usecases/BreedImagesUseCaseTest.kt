@@ -28,11 +28,10 @@ class BreedImagesUseCaseTest {
     fun `Given repository returns success When breedImagesusecase is called Then invoke function should get called from repository`() =
         runTest {
             val breedName = "hound"
-            coEvery { dogBreedImagesRepository.getDogBreedImages(breedName) } returns flow {
-                emit(
+            coEvery { dogBreedImagesRepository.getDogBreedImages(breedName) } returns
                     Result.Success(emptyList<DogBreedImage>())
-                )
-            }
+
+
             getDogBreedImagesUseCase(breedName)
             coVerify(exactly = 1) { dogBreedImagesRepository.getDogBreedImages(breedName) }
         }

@@ -1,8 +1,7 @@
 package com.sagarika.features.presentation.ui.breedlist
 
 import androidx.lifecycle.viewModelScope
-import com.sagarika.common.Failure
-import com.sagarika.common.Result
+ import com.sagarika.common.Result
 import com.sagarika.domain.model.DogBreed
 import com.sagarika.domain.model.DogSubBreed
 import com.sagarika.features.presentation.ui.base.BaseViewModel
@@ -12,8 +11,9 @@ import kotlinx.coroutines.Dispatchers
 import com.sagarika.domain.usecases.BreedListUseCase
 import com.sagarika.features.presentation.constants.errorMsg
 import com.sagarika.features.presentation.constants.servererrorMsg
-import com.sagarika.features.presentation.mapper.toPresentation
-import com.sagarika.features.presentation.model.DogBreedPresentation
+import com.sagarika.features.presentation.mapper.DogBreedDomainToDogBreedPresentation
+ import com.sagarika.features.presentation.model.DogBreedPresentation
+import com.sagarika.features.presentation.ui.breedgallery.DogBreedImagesState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -30,21 +30,18 @@ import javax.inject.Inject
 @HiltViewModel
 class BreedListViewModel @Inject constructor(
     private val getDogBreeds: BreedListUseCase,
+    private val dogBreedDomainToDogBreedPresentation: DogBreedDomainToDogBreedPresentation
 ) :
     BaseViewModel<BreedListViewState, BreedListViewIntent, BreedListSideEffect>() {
 
-    private val _viewState =
-        MutableStateFlow<BreedListViewState>(BreedListViewState.Loading)
-    val viewState: StateFlow<BreedListViewState> = _viewState
-    private val _sideEffect = MutableSharedFlow<BreedListSideEffect>()
-    val sideEffect: SharedFlow<BreedListSideEffect>
-        get() = _sideEffect
-
+    init {
+        sendIntent(BreedListViewIntent.LoadData)
+    }
 
     private fun showBreedGallery(breedName: String) {
         viewModelScope.launch {
             _sideEffect.emit(BreedListSideEffect.ShowGallery(breedName))
-         }
+        }
     }
 
     private fun showSubBreedGallery(breedName: String, subBreed: String) {
@@ -61,45 +58,32 @@ class BreedListViewModel @Inject constructor(
                 intent.breedName,
                 intent.subBreedName
             )
-
         }
     }
 
     private fun fetchBreedList() {
         viewModelScope.launch {
-            _viewState.value = BreedListViewState.Loading
-            getDogBreeds().collect() { result ->
-                when (result) {
-                    is Result.Success -> {
-                        result.data?.let { handleSuccess(it) }
-                    }
-
-                    is Result.Error -> {
-                        handleError(failure = result.failure)
-                    }
+            when (val result = getDogBreeds()) {
+                is Result.Success -> {
+                    result.data?.let { handleSuccess(it) }
                 }
 
+                is Result.Error -> {
+                    _viewState.emit(BreedListViewState.Error(errorMsg))
+                }
             }
         }
     }
 
 
-     private fun handleError(failure: Failure) {
-        when (failure) {
-            is Failure.DataError -> _viewState.value = BreedListViewState.Error(errorMsg)
-             is Failure.ServerError -> _viewState.value = BreedListViewState.Error(servererrorMsg)
-        }
-    }
-
-    private fun handleSuccess(dogBreeds: List<DogBreed>) {
+    private suspend fun handleSuccess(dogBreeds: List<DogBreed>) {
         if (dogBreeds.isEmpty()) {
-            _viewState.value = BreedListViewState.NoDogBreeds
+            _viewState.emit(BreedListViewState.NoDogBreeds)
         } else {
-            _viewState.value = BreedListViewState.DogBreeds(dogBreeds.map {
-                it.toPresentation()
-            })
+            _viewState.emit(BreedListViewState.DogBreeds(dogBreeds.map {
+                dogBreedDomainToDogBreedPresentation.map(it)
+            }))
         }
     }
-
-
+    override fun createInitialState() = BreedListViewState.Loading
 }

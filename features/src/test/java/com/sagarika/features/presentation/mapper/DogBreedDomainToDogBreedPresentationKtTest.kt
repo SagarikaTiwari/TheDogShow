@@ -5,9 +5,16 @@ import com.sagarika.domain.model.DogSubBreed
 import com.sagarika.features.presentation.model.DogBreedPresentation
 import com.sagarika.features.presentation.model.DogSubBreedPresentation
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 
 class DogBreedDomainToDogBreedPresentationTest {
+    private lateinit var mapper : DogBreedDomainToDogBreedPresentation
+
+    @Before
+    fun setUp(){
+        mapper = DogBreedDomainToDogBreedPresentation()
+    }
     @Test
     fun `Given dogBreed with empty subbreed list when DogBreedDomainToDogBreedPresentation mapper is called Then it returns dogBreedpresentation with empty subbreed`() {
         val dogBreed = DogBreed(
@@ -19,7 +26,7 @@ class DogBreedDomainToDogBreedPresentationTest {
             breedName = "Hound",
             subBreeds = emptyList()
         )
-        assert(dogBreed.toPresentation() == expected)
+        assert(mapper.map(dogBreed) == expected)
     }
 
     @Test
@@ -38,6 +45,6 @@ class DogBreedDomainToDogBreedPresentationTest {
                 )
             )
         )
-        assert(dogBreed.toPresentation() == expected)
+        assert(mapper.map(dogBreed)== expected)
     }
 }

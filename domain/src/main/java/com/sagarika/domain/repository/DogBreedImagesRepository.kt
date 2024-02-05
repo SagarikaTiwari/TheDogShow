@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface DogBreedImagesRepository {
 
-    fun getDogBreedImages(breedName: String): Flow<Result<List<DogBreedImage>>>
-    fun getDogSubBreedImages(
+    suspend fun getDogBreedImages(breedName: String): Result<List<DogBreedImage>>
+    suspend fun getDogSubBreedImages(
         breedName: String,
         subBreedName: String
-    ): Flow<Result<List<DogBreedImage>>>
+    ): Result<List<DogBreedImage>>
 
 }

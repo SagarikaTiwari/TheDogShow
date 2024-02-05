@@ -35,11 +35,9 @@ class DogSubBreedUseCaseTest {
                     dogSubBreedParams.breedName,
                     dogSubBreedParams.subBreedName
                 )
-            } returns flow {
-                emit(
+            } returns
                     Result.Success(emptyList<DogBreedImage>())
-                )
-            }
+
             getDogSubBreedImagesUseCase(dogSubBreedParams)
             coVerify(exactly = 1) {
                 dogBreedImagesRepository.getDogSubBreedImages(
