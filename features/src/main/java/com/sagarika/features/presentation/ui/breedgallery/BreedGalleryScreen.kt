@@ -26,19 +26,19 @@ fun BreedGalleryScreen(
 
 
     when (val viewState = breedGalleryViewModel.viewState.collectAsState().value) {
-        is DogBreedImagesState.Loading -> {
+        is BreedGalleryMVIContract.BreedGalleryViewState.Loading -> {
             LoadingIndicator()
         }
 
-        is DogBreedImagesState.Error -> {
+        is BreedGalleryMVIContract.BreedGalleryViewState.Error -> {
             ErrorViewInABox()
         }
 
-        is DogBreedImagesState.NoDogBreedImages -> {
+        is BreedGalleryMVIContract.BreedGalleryViewState.NoDogBreedImages -> {
             PhotoGrid(emptyList())
         }
 
-        is DogBreedImagesState.DogBreedImages -> {
+        is BreedGalleryMVIContract.BreedGalleryViewState.DogBreedImages -> {
             PhotoGrid(viewState.dogBreedImages)
         }
     }

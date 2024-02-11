@@ -47,19 +47,17 @@ fun BreedListScreen(
 
 @Composable
 fun BreedList(breedListViewModel: BreedListViewModel, callback: (breedName: String) -> Unit) {
-
-
-    val breedListState: BreedListViewState by breedListViewModel.viewState.collectAsStateWithLifecycle()
+    val breedListState by breedListViewModel.viewState.collectAsStateWithLifecycle()
     when (breedListState) {
 
-        is BreedListViewState.Loading ->
+        is BreedListMVIContract.BreedListViewState.Loading ->
             LoadingIndicator()
 
-        is BreedListViewState.Error -> {
+        is BreedListMVIContract.BreedListViewState.Error -> {
             ErrorViewInABox()
         }
 
-        is BreedListViewState.NoDogBreeds -> {
+        is BreedListMVIContract.BreedListViewState.NoDogBreeds -> {
             CustomText(
                 emptyListMsg,
                 Modifier
@@ -69,8 +67,8 @@ fun BreedList(breedListViewModel: BreedListViewModel, callback: (breedName: Stri
             )
         }
 
-        is BreedListViewState.DogBreeds -> {
-            val breedList = (breedListState as BreedListViewState.DogBreeds).dogBreeds
+        is BreedListMVIContract.BreedListViewState.DogBreeds -> {
+            val breedList = (breedListState as BreedListMVIContract.BreedListViewState.DogBreeds).dogBreeds
             LazyColumn(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.SpaceBetween,
@@ -106,10 +104,10 @@ fun BreedList(breedListViewModel: BreedListViewModel, callback: (breedName: Stri
 
     LaunchedEffect(key1 = 1, block = {
         breedListViewModel.sideEffect.collect {
-            if (it is BreedListSideEffect.ShowGallery) {
+            if (it is BreedListMVIContract.BreedListSideEffect.ShowGallery) {
                 callback(it.breedName.lowercase() + "$")
             }
-            if (it is BreedListSideEffect.ShowSubBreedGallery) {
+            if (it is BreedListMVIContract.BreedListSideEffect.ShowSubBreedGallery) {
                 callback(it.breedName.lowercase() + "$" + it.subBreed.lowercase())
             }
         }
@@ -126,7 +124,7 @@ fun SubBreedListRow(subBreed: DogSubBreedPresentation, breedListViewModel: Breed
                 .padding(10.dp)
                 .clickable {
                     breedListViewModel.sendIntent(
-                        BreedListViewIntent.OnSubBreedClick(
+                        BreedListMVIContract.BreedListViewIntent.OnSubBreedClick(
                             subBreed.parentBreedName, subBreed.breedName
                         )
                     )
@@ -169,7 +167,7 @@ fun BreedListRow(
                     .padding(10.dp)
                     .clickable {
                         breedListViewModel.sendIntent(
-                            BreedListViewIntent.OnBreedClick(
+                            BreedListMVIContract.BreedListViewIntent.OnBreedClick(
                                 dogBreedPresentation.breedName
                             )
                         )

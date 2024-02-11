@@ -1,7 +1,7 @@
 package com.sagarika.features.presentation.ui.breedgallery
 
-import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sagarika.common.Result
 import com.sagarika.domain.model.DogBreedImage
@@ -9,17 +9,13 @@ import com.sagarika.domain.usecases.BreedImagesUseCase
 import com.sagarika.domain.usecases.DogSubBreedUseCase
 import com.sagarika.features.presentation.constants.breedName
 import com.sagarika.features.presentation.constants.errorMsg
-import com.sagarika.features.presentation.constants.servererrorMsg
 import com.sagarika.features.presentation.mapper.DogBreedImageDomainToDogBreedImagePresentation
-import com.sagarika.features.presentation.model.DogBreedImagePresentation
-import com.sagarika.features.presentation.ui.base.BaseViewModel
-import com.sagarika.features.presentation.ui.breedlist.BreedListViewState
+import com.sagarika.features.presentation.ui.base.MVI
+import com.sagarika.features.presentation.ui.base.SideEffect
+import com.sagarika.features.presentation.ui.base.ViewIntent
+import com.sagarika.features.presentation.ui.base.ViewState
+import com.sagarika.features.presentation.ui.base.mvi
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,8 +26,10 @@ class BreedGalleryViewModel @Inject constructor(
     private val dogBreedImageDomainToDogBreedImagePresentation: DogBreedImageDomainToDogBreedImagePresentation,
     savedStateHandle: SavedStateHandle
 
-) :
-    BaseViewModel<DogBreedImagesState, BreedGalleryViewIntent, BreedGallerySideEffect>() {
+) : ViewModel(),
+    MVI<ViewState, ViewIntent, SideEffect> by mvi<BreedGalleryMVIContract.BreedGalleryViewState, BreedGalleryMVIContract.BreedGalleryViewIntent, BreedGalleryMVIContract.BreedGallerySideEffect>(
+        BreedGalleryMVIContract.BreedGalleryViewState.Loading
+    ) {
 
     init {
         val breedName = savedStateHandle.get<String>(breedName)
@@ -39,21 +37,28 @@ class BreedGalleryViewModel @Inject constructor(
             val breedSubbreedList = breedName.split("$")
             if (breedSubbreedList[1].length > 1) {
                 sendIntent(
-                    BreedGalleryViewIntent.LoadSubBreedImage(
+                    BreedGalleryMVIContract.BreedGalleryViewIntent.LoadSubBreedImage(
                         breedSubbreedList[0],
                         breedSubbreedList[1]
                     )
                 )
             } else {
-                sendIntent(BreedGalleryViewIntent.LoadBreedImage(breedSubbreedList[0]))
+                sendIntent(
+                    BreedGalleryMVIContract.BreedGalleryViewIntent.LoadBreedImage(
+                        breedSubbreedList[0]
+                    )
+                )
             }
         }
     }
 
-    override fun sendIntent(intent: BreedGalleryViewIntent) {
+    fun sendIntent(intent: BreedGalleryMVIContract.BreedGalleryViewIntent) {
         when (intent) {
-            is BreedGalleryViewIntent.LoadBreedImage -> fetchBreedImages(breedName = intent.breedName)
-            is BreedGalleryViewIntent.LoadSubBreedImage -> fetchDogSubBreedImages(
+            is BreedGalleryMVIContract.BreedGalleryViewIntent.LoadBreedImage -> fetchBreedImages(
+                breedName = intent.breedName
+            )
+
+            is BreedGalleryMVIContract.BreedGalleryViewIntent.LoadSubBreedImage -> fetchDogSubBreedImages(
                 intent.breedName,
                 intent.subbreedName
             )
@@ -67,11 +72,11 @@ class BreedGalleryViewModel @Inject constructor(
 
             when (val result = breedImagesUseCase(breedName)) {
                 is Result.Success -> {
-                    result.data?.let { handleSuccess(it) }
+                    handleSuccess(result.data)
                 }
 
                 is Result.Error -> {
-                    _viewState.emit(DogBreedImagesState.Error(errorMsg))
+                    updateViewState(BreedGalleryMVIContract.BreedGalleryViewState.Error(errorMsg))
                 }
             }
         }
@@ -85,13 +90,11 @@ class BreedGalleryViewModel @Inject constructor(
                 DogSubBreedUseCase.DogSubBreedParams(breedName, subBreedName)
             )) {
                 is Result.Success -> {
-                    result.data?.let {
-                        handleSuccess(it)
-                    }
+                    handleSuccess(result.data)
                 }
 
                 is Result.Error -> {
-                    _viewState.emit(DogBreedImagesState.Error(errorMsg))
+                    updateViewState(BreedGalleryMVIContract.BreedGalleryViewState.Error(errorMsg))
                 }
             }
 
@@ -100,18 +103,16 @@ class BreedGalleryViewModel @Inject constructor(
     }
 
 
-    private suspend fun handleSuccess(dogBreedImages: List<DogBreedImage>) {
+    private fun handleSuccess(dogBreedImages: List<DogBreedImage>) {
         if (dogBreedImages.isEmpty()) {
-            _viewState.emit(DogBreedImagesState.NoDogBreedImages)
+            updateViewState(BreedGalleryMVIContract.BreedGalleryViewState.NoDogBreedImages)
+
         } else {
-            _viewState.emit(
-                DogBreedImagesState.DogBreedImages(dogBreedImages.map {
+            updateViewState(
+                BreedGalleryMVIContract.BreedGalleryViewState.DogBreedImages(dogBreedImages.map {
                     dogBreedImageDomainToDogBreedImagePresentation.map(it)
                 })
             )
         }
     }
-
-    override fun createInitialState() = DogBreedImagesState.Loading
-
 }
