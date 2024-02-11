@@ -1,5 +1,7 @@
 package com.sagarika.features.presentation.ui.breedgallery
 
+import androidx.lifecycle.SavedStateHandle
+import com.sagarika.common.Result
 import com.sagarika.domain.usecases.BreedImagesUseCase
 import com.sagarika.domain.usecases.DogSubBreedUseCase
 import com.sagarika.features.presentation.constants.errorMsg
@@ -42,7 +44,8 @@ class BreedGalleryViewModelTest {
         breedGalleryViewModel = BreedGalleryViewModel(
             breedImagesUseCase,
             subBreedUseCase,
-            dogBreedImageDomainToDogBreedImagePresentation
+            dogBreedImageDomainToDogBreedImagePresentation,
+            savedStateHandle = SavedStateHandle()
         )
     }
 
@@ -58,13 +61,14 @@ class BreedGalleryViewModelTest {
             val breedGalleryData = FakeGalleryData.getBreedGalleryWithSuccess()
             coEvery {
                 breedImagesUseCase(breedName)
-            } returns breedGalleryData
+            } returns Result.Success(breedGalleryData)
+            coEvery { dogBreedImageDomainToDogBreedImagePresentation.map(breedGalleryData[0]) }returns FakeGalleryData.getMappedBreedGalleryData()[0]
 
             breedGalleryViewModel.sendIntent(BreedGalleryViewIntent.LoadBreedImage(breedName))
 
             assertEquals(
-                breedGalleryViewModel.viewState.value,
-                breedGalleryData
+                DogBreedImagesState.DogBreedImages(FakeGalleryData.getMappedBreedGalleryData()),
+                breedGalleryViewModel.viewState.value
             )
         }
 
@@ -98,9 +102,14 @@ class BreedGalleryViewModelTest {
     @Test
     fun `Given BreedGallery data When Intent is LoadSubBreedImage Then viewState contains list of Image Urls to Show Gallery`() =
         runTest {
+
+            var breedGalleryData = FakeGalleryData.getBreedGalleryWithSuccess()
             coEvery {
                 subBreedUseCase(dogSubBreedParams)
-            } returns FakeGalleryData.getBreedGalleryWithSuccess()
+            } returns Result.Success(breedGalleryData)
+
+            coEvery { dogBreedImageDomainToDogBreedImagePresentation.map(breedGalleryData[0]) }returns FakeGalleryData.getMappedBreedGalleryData()[0]
+
             breedGalleryViewModel.sendIntent(
                 BreedGalleryViewIntent.LoadSubBreedImage(
                     breedName,
@@ -108,12 +117,8 @@ class BreedGalleryViewModelTest {
                 )
             )
             assertEquals(
-                breedGalleryViewModel.viewState.value,
-                DogBreedImagesState.DogBreedImages(
-                    listOf(
-                        DogBreedImagePresentation("https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg")
-                    )
-                )
+                DogBreedImagesState.DogBreedImages(FakeGalleryData.getMappedBreedGalleryData()),
+                breedGalleryViewModel.viewState.value
             )
         }
 

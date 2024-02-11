@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sagarika.features.presentation.model.DogBreedImagePresentation
 import com.sagarika.features.presentation.ui.customcomposables.ErrorViewInABox
 import com.sagarika.features.presentation.ui.customcomposables.LoadImage
@@ -20,33 +21,23 @@ import com.sagarika.features.presentation.ui.customcomposables.LoadingIndicator
 
 @Composable
 fun BreedGalleryScreen(
-    breedName: String,
-    breedGalleryViewModel: BreedGalleryViewModel,
 ) {
-    val breedSubbreedList = breedName.split("$")
-    LaunchedEffect(1) {
-        if (breedSubbreedList[1].length > 1) {
-            breedGalleryViewModel.sendIntent(
-                BreedGalleryViewIntent.LoadSubBreedImage(
-                    breedSubbreedList[0],
-                    breedSubbreedList[1]
-                )
-            )
-        } else {
-            breedGalleryViewModel.sendIntent(BreedGalleryViewIntent.LoadBreedImage(breedSubbreedList[0]))
-        }
-    }
+    val breedGalleryViewModel: BreedGalleryViewModel = hiltViewModel()
+
 
     when (val viewState = breedGalleryViewModel.viewState.collectAsState().value) {
         is DogBreedImagesState.Loading -> {
             LoadingIndicator()
         }
+
         is DogBreedImagesState.Error -> {
             ErrorViewInABox()
         }
+
         is DogBreedImagesState.NoDogBreedImages -> {
             PhotoGrid(emptyList())
         }
+
         is DogBreedImagesState.DogBreedImages -> {
             PhotoGrid(viewState.dogBreedImages)
         }

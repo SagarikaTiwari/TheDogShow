@@ -24,21 +24,27 @@ object FakeData {
                 name = "hound",
                 subBreed = listOf(DogSubBreed("afd"))
 
+            ),
+            DogBreed(
+                name = "african",
+                subBreed = listOf()
+
             )
         )
     }
+    fun getMappedBreedList(): List<DogBreedPresentation> {
 
-    fun getMappedBreedHound(): DogBreedPresentation {
-        return DogBreedPresentation(
-            "H",
-            "hound",
-            listOf(DogSubBreedPresentation("A", "hound", "afd"))
+        return listOf(
+            DogBreedPresentation(
+                "H",
+                "hound",
+                listOf(DogSubBreedPresentation("A", "hound", "afd"))
+            ),
+              DogBreedPresentation("A", "african", emptyList())
+
         )
     }
 
-    fun getMappedBreedAfrican(): DogBreedPresentation {
-        return DogBreedPresentation("A", "african", emptyList())
-    }
 
 
     fun getBreedListWithNoBreeds(): Result<List<DogBreed>> =

@@ -3,15 +3,21 @@ package com.sagarika.features.presentation.ui.breedgallery.fakes
 import com.sagarika.common.Result
 import com.sagarika.domain.model.DogBreedImage
 import com.sagarika.features.presentation.constants.errorMsg
+import com.sagarika.features.presentation.model.DogBreedImagePresentation
 
 object FakeGalleryData {
 
-     fun getBreedGalleryWithSuccess(): Result<List<DogBreedImage>> =
-        Result.Success(
+     fun getBreedGalleryWithSuccess(): List<DogBreedImage> =
+
             listOf(
                 DogBreedImage(
                     imageUrl = "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg"
                 )
+            )
+    fun getMappedBreedGalleryData(): List<DogBreedImagePresentation> =
+        listOf(
+            DogBreedImagePresentation(
+                imageUrl = "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg"
             )
         )
 

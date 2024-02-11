@@ -10,6 +10,7 @@ import com.sagarika.features.presentation.model.DogBreedPresentation
 import com.sagarika.features.presentation.model.DogSubBreedPresentation
 import com.sagarika.features.presentation.ui.breedlist.fakes.FakeData
 import io.mockk.coEvery
+import io.mockk.junit4.MockKRule
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,11 +21,15 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 
 class BreedListViewModelTest {
+
+    @get:Rule
+    val mockkRule = MockKRule(this)
     private var getDogBreedsUseCase = mockk<BreedListUseCase>()
     private lateinit var dogBreedViewModel: BreedListViewModel
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -40,17 +45,18 @@ class BreedListViewModelTest {
     @Test
     fun `GIVEN breed list data WHEN LoadData ViewIntent sent THEN viewState contains list of breeds`() =
         runTest {
-            val firstBreed = FakeData.getBreedListWithSuccess()[0]
             coEvery {
                 getDogBreedsUseCase()
             } returns Result.Success(FakeData.getBreedListWithSuccess())
 
-            coEvery { dogBreedDomainToDogBreedPresentation.map(firstBreed) } returns FakeData.getMappedBreedHound()
+            coEvery { dogBreedDomainToDogBreedPresentation.map( FakeData.getBreedListWithSuccess()[0]) } returns FakeData.getMappedBreedList()[0]
+            coEvery { dogBreedDomainToDogBreedPresentation.map( FakeData.getBreedListWithSuccess()[1]) } returns FakeData.getMappedBreedList()[1]
+
             dogBreedViewModel.sendIntent(BreedListViewIntent.LoadData)
 
             assertEquals(
                 dogBreedViewModel.viewState.value,
-                FakeData.getMappedBreedHound()
+                BreedListViewState.DogBreeds(FakeData.getMappedBreedList())
             )
         }
 

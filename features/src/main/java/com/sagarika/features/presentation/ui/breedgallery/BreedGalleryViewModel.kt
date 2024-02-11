@@ -1,10 +1,13 @@
 package com.sagarika.features.presentation.ui.breedgallery
 
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
- import com.sagarika.common.Result
+import com.sagarika.common.Result
 import com.sagarika.domain.model.DogBreedImage
 import com.sagarika.domain.usecases.BreedImagesUseCase
 import com.sagarika.domain.usecases.DogSubBreedUseCase
+import com.sagarika.features.presentation.constants.breedName
 import com.sagarika.features.presentation.constants.errorMsg
 import com.sagarika.features.presentation.constants.servererrorMsg
 import com.sagarika.features.presentation.mapper.DogBreedImageDomainToDogBreedImagePresentation
@@ -24,10 +27,28 @@ import javax.inject.Inject
 class BreedGalleryViewModel @Inject constructor(
     private val breedImagesUseCase: BreedImagesUseCase,
     private val subBreedUseCase: DogSubBreedUseCase,
-    private val dogBreedImageDomainToDogBreedImagePresentation: DogBreedImageDomainToDogBreedImagePresentation
+    private val dogBreedImageDomainToDogBreedImagePresentation: DogBreedImageDomainToDogBreedImagePresentation,
+    savedStateHandle: SavedStateHandle
+
 ) :
     BaseViewModel<DogBreedImagesState, BreedGalleryViewIntent, BreedGallerySideEffect>() {
 
+    init {
+        val breedName = savedStateHandle.get<String>(breedName)
+        if (breedName != null) {
+            val breedSubbreedList = breedName.split("$")
+            if (breedSubbreedList[1].length > 1) {
+                sendIntent(
+                    BreedGalleryViewIntent.LoadSubBreedImage(
+                        breedSubbreedList[0],
+                        breedSubbreedList[1]
+                    )
+                )
+            } else {
+                sendIntent(BreedGalleryViewIntent.LoadBreedImage(breedSubbreedList[0]))
+            }
+        }
+    }
 
     override fun sendIntent(intent: BreedGalleryViewIntent) {
         when (intent) {
@@ -77,7 +98,6 @@ class BreedGalleryViewModel @Inject constructor(
         }
 
     }
-
 
 
     private suspend fun handleSuccess(dogBreedImages: List<DogBreedImage>) {
