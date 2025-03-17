@@ -13,6 +13,7 @@ interface BreedListMVIContract : MVI<ViewState, ViewIntent, SideEffect> {
         data class Error(val errorMessage: String) : BreedListViewState
         data class DogBreeds(val dogBreeds: List<DogBreedPresentation>) : BreedListViewState
         data object NoDogBreeds : BreedListViewState
+
     }
 
     sealed interface BreedListViewIntent : ViewIntent {

@@ -16,5 +16,6 @@ class DogBreedListResponseToDogBreedListDTO @Inject constructor() {
             DogBreed(it.key, subBreed)
         }
     }
+
 }
 

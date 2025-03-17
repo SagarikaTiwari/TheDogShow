@@ -25,7 +25,7 @@ fun BreedGalleryScreen(
     val breedGalleryViewModel: BreedGalleryViewModel = hiltViewModel()
 
 
-    when (val viewState = breedGalleryViewModel.viewState.collectAsState().value) {
+    when (val viewState = breedGalleryViewModel.viewState.collectAsState(initial = BreedGalleryMVIContract.BreedGalleryViewState.Loading).value) {
         is BreedGalleryMVIContract.BreedGalleryViewState.Loading -> {
             LoadingIndicator()
         }

@@ -1,5 +1,6 @@
 package com.sagarika.features.presentation.ui.base
 
+import com.sagarika.features.presentation.ui.breedgallery.BreedGalleryMVIContract
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,8 +11,9 @@ import kotlinx.coroutines.launch
 
 class MVIDelegate internal constructor( initialState: ViewState) :
     MVI<ViewState, ViewIntent, SideEffect> {
-    private val _viewState = MutableStateFlow(initialState)
+    private val _viewState = MutableStateFlow<ViewState>(initialState)
     override val viewState = _viewState.asStateFlow()
+
 
     private val _sideEffect = MutableSharedFlow<SideEffect>()
     override val sideEffect = _sideEffect.asSharedFlow()
@@ -24,9 +26,9 @@ class MVIDelegate internal constructor( initialState: ViewState) :
         }
     }
 
-    override fun updateViewState(viewState: ViewState) {
-        _viewState.value = viewState
-    }
+    override suspend fun updateViewState(viewState: ViewState) {
+        _viewState.emit(viewState)
+     }
 
 }
 

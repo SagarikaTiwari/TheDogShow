@@ -2,16 +2,12 @@ package com.sagarika.domain.usecases
 
 import com.sagarika.common.Result
 import com.sagarika.domain.model.DogBreedImage
-import com.sagarika.domain.repository.DogBreedImagesRepository
+import com.sagarika.domain.repository.BreedRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
@@ -20,29 +16,31 @@ import org.junit.Test
 class DogSubBreedUseCaseTest {
     private lateinit var getDogSubBreedImagesUseCase: DogSubBreedUseCase
 
-    private var dogBreedImagesRepository = mockk<DogBreedImagesRepository>()
+    private var breedRepository = mockk<BreedRepository>()
 
     @Before
     fun setUp() {
-        getDogSubBreedImagesUseCase = DogSubBreedUseCase(dogBreedImagesRepository)
+        getDogSubBreedImagesUseCase = DogSubBreedUseCase(breedRepository)
     }
 
     @Test
-    fun `Given repository returns success When dogSubBreedUseCase is called Then invoke function should get called from repository`() = runTest {
-            val dogSubBreedParams = DogSubBreedUseCase.DogSubBreedParams("hound", "afgan")
+    fun `Given repository returns success When dogSubBreedUseCase is called Then invoke function should get called from repository`() =
+        runTest {
+            val breedName = "hound"
+            val subBreedName = "afgan"
             coEvery {
-                dogBreedImagesRepository.getDogSubBreedImages(
-                    dogSubBreedParams.breedName,
-                    dogSubBreedParams.subBreedName
+                breedRepository.getSubBreedImages(
+                    breedName,
+                    subBreedName
                 )
             } returns
                     Result.Success(emptyList<DogBreedImage>())
 
-            getDogSubBreedImagesUseCase(dogSubBreedParams)
+            getDogSubBreedImagesUseCase(breedName, subBreedName)
             coVerify(exactly = 1) {
-                dogBreedImagesRepository.getDogSubBreedImages(
-                    dogSubBreedParams.breedName,
-                    dogSubBreedParams.subBreedName
+                breedRepository.getSubBreedImages(
+                    breedName,
+                    subBreedName
                 )
             }
         }

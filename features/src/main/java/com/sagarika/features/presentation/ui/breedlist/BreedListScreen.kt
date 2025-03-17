@@ -20,16 +20,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sagarika.features.presentation.constants.emptyListMsg
-import com.sagarika.features.presentation.constants.errorMsg
 import com.sagarika.features.presentation.model.DogBreedPresentation
 import com.sagarika.features.presentation.model.DogSubBreedPresentation
 import com.sagarika.features.presentation.ui.customcomposables.CustomText
@@ -47,7 +44,9 @@ fun BreedListScreen(
 
 @Composable
 fun BreedList(breedListViewModel: BreedListViewModel, callback: (breedName: String) -> Unit) {
-    val breedListState by breedListViewModel.viewState.collectAsStateWithLifecycle()
+
+
+    val breedListState by breedListViewModel.viewState.collectAsState(BreedListMVIContract.BreedListViewState.Loading)
     when (breedListState) {
 
         is BreedListMVIContract.BreedListViewState.Loading ->
@@ -153,7 +152,6 @@ fun BreedListRow(
 ) {
     Column {
         var mExpanded by remember { mutableStateOf(false) }
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()

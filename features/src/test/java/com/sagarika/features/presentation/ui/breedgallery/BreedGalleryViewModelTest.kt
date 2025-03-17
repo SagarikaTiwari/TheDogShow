@@ -31,7 +31,6 @@ class BreedGalleryViewModelTest {
     private val testDispatcher = UnconfinedTestDispatcher()
     private lateinit var breedName: String
     private lateinit var subBreedName: String
-    private lateinit var dogSubBreedParams: DogSubBreedUseCase.DogSubBreedParams
     private val dogBreedImageDomainToDogBreedImagePresentation =
         mockk<DogBreedImageDomainToDogBreedImagePresentation>()
 
@@ -39,7 +38,6 @@ class BreedGalleryViewModelTest {
     fun setUp() {
         breedName = "hound"
         subBreedName = "afgan"
-        dogSubBreedParams = DogSubBreedUseCase.DogSubBreedParams(breedName, subBreedName)
         Dispatchers.setMain(testDispatcher)
         breedGalleryViewModel = BreedGalleryViewModel(
             breedImagesUseCase,
@@ -64,10 +62,10 @@ class BreedGalleryViewModelTest {
             } returns Result.Success(breedGalleryData)
             coEvery { dogBreedImageDomainToDogBreedImagePresentation.map(breedGalleryData[0]) }returns FakeGalleryData.getMappedBreedGalleryData()[0]
 
-            breedGalleryViewModel.sendIntent(BreedGalleryViewIntent.LoadBreedImage(breedName))
+            breedGalleryViewModel.sendIntent(BreedGalleryMVIContract.BreedGalleryViewIntent.LoadBreedImage(breedName))
 
             assertEquals(
-                DogBreedImagesState.DogBreedImages(FakeGalleryData.getMappedBreedGalleryData()),
+                BreedGalleryMVIContract.BreedGalleryViewState.DogBreedImages(FakeGalleryData.getMappedBreedGalleryData()),
                 breedGalleryViewModel.viewState.value
             )
         }
@@ -78,10 +76,10 @@ class BreedGalleryViewModelTest {
             coEvery {
                 breedImagesUseCase(breedName)
             } returns FakeGalleryData.getEmptyBreedGallery()
-            breedGalleryViewModel.sendIntent(BreedGalleryViewIntent.LoadBreedImage(breedName))
+            breedGalleryViewModel.sendIntent(BreedGalleryMVIContract.BreedGalleryViewIntent.LoadBreedImage(breedName))
             assertEquals(
                 breedGalleryViewModel.viewState.value,
-                DogBreedImagesState.NoDogBreedImages
+                BreedGalleryMVIContract.BreedGalleryViewState.NoDogBreedImages
             )
         }
 
@@ -91,10 +89,10 @@ class BreedGalleryViewModelTest {
             coEvery {
                 breedImagesUseCase(breedName)
             } returns FakeGalleryData.getException()
-            breedGalleryViewModel.sendIntent(BreedGalleryViewIntent.LoadBreedImage(breedName))
+            breedGalleryViewModel.sendIntent(BreedGalleryMVIContract.BreedGalleryViewIntent.LoadBreedImage(breedName))
             assertEquals(
                 breedGalleryViewModel.viewState.value,
-                DogBreedImagesState.Error(errorMsg)
+                BreedGalleryMVIContract.BreedGalleryViewState.Error(errorMsg)
             )
         }
 
@@ -105,19 +103,19 @@ class BreedGalleryViewModelTest {
 
             var breedGalleryData = FakeGalleryData.getBreedGalleryWithSuccess()
             coEvery {
-                subBreedUseCase(dogSubBreedParams)
+                subBreedUseCase(breedName, subBreedName)
             } returns Result.Success(breedGalleryData)
 
             coEvery { dogBreedImageDomainToDogBreedImagePresentation.map(breedGalleryData[0]) }returns FakeGalleryData.getMappedBreedGalleryData()[0]
 
             breedGalleryViewModel.sendIntent(
-                BreedGalleryViewIntent.LoadSubBreedImage(
+                BreedGalleryMVIContract.BreedGalleryViewIntent.LoadSubBreedImage(
                     breedName,
                     subBreedName
                 )
             )
             assertEquals(
-                DogBreedImagesState.DogBreedImages(FakeGalleryData.getMappedBreedGalleryData()),
+                BreedGalleryMVIContract.BreedGalleryViewState.DogBreedImages(FakeGalleryData.getMappedBreedGalleryData()),
                 breedGalleryViewModel.viewState.value
             )
         }
@@ -126,17 +124,17 @@ class BreedGalleryViewModelTest {
     fun `Given empty data When Intent is LoadSubBreedImage Then viewState is set to No Dog Images`() =
         runTest {
             coEvery {
-                subBreedUseCase(dogSubBreedParams)
+                subBreedUseCase(breedName, subBreedName)
             } returns FakeGalleryData.getEmptyBreedGallery()
             breedGalleryViewModel.sendIntent(
-                BreedGalleryViewIntent.LoadSubBreedImage(
+                BreedGalleryMVIContract.BreedGalleryViewIntent.LoadSubBreedImage(
                     breedName,
                     subBreedName
                 )
             )
             assertEquals(
                 breedGalleryViewModel.viewState.value,
-                DogBreedImagesState.NoDogBreedImages
+                BreedGalleryMVIContract.BreedGalleryViewState.NoDogBreedImages
             )
         }
 
@@ -144,17 +142,17 @@ class BreedGalleryViewModelTest {
     fun `Given data error When Intent is LoadSubBreedImage Then viewState is set to data error with error message`() =
         runTest {
             coEvery {
-                subBreedUseCase(dogSubBreedParams)
+                subBreedUseCase(breedName, subBreedName)
             } returns FakeGalleryData.getException()
             breedGalleryViewModel.sendIntent(
-                BreedGalleryViewIntent.LoadSubBreedImage(
+                BreedGalleryMVIContract.BreedGalleryViewIntent.LoadSubBreedImage(
                     breedName,
                     subBreedName
                 )
             )
             assertEquals(
                 breedGalleryViewModel.viewState.value,
-                DogBreedImagesState.Error(errorMsg)
+                BreedGalleryMVIContract.BreedGalleryViewState.Error(errorMsg)
             )
         }
 

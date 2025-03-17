@@ -11,6 +11,7 @@ import com.sagarika.features.presentation.constants.breedName
 import com.sagarika.features.presentation.constants.errorMsg
 import com.sagarika.features.presentation.mapper.DogBreedImageDomainToDogBreedImagePresentation
 import com.sagarika.features.presentation.ui.base.MVI
+import com.sagarika.features.presentation.ui.base.MVIDelegate
 import com.sagarika.features.presentation.ui.base.SideEffect
 import com.sagarika.features.presentation.ui.base.ViewIntent
 import com.sagarika.features.presentation.ui.base.ViewState
@@ -78,6 +79,8 @@ class BreedGalleryViewModel @Inject constructor(
                 is Result.Error -> {
                     updateViewState(BreedGalleryMVIContract.BreedGalleryViewState.Error(errorMsg))
                 }
+
+                else -> {}
             }
         }
 
@@ -86,9 +89,7 @@ class BreedGalleryViewModel @Inject constructor(
     private fun fetchDogSubBreedImages(breedName: String, subBreedName: String) {
 
         viewModelScope.launch {
-            when (val result = subBreedUseCase(
-                DogSubBreedUseCase.DogSubBreedParams(breedName, subBreedName)
-            )) {
+            when (val result = subBreedUseCase(breedName, subBreedName)) {
                 is Result.Success -> {
                     handleSuccess(result.data)
                 }
@@ -96,6 +97,8 @@ class BreedGalleryViewModel @Inject constructor(
                 is Result.Error -> {
                     updateViewState(BreedGalleryMVIContract.BreedGalleryViewState.Error(errorMsg))
                 }
+
+                else -> {}
             }
 
         }
@@ -103,7 +106,7 @@ class BreedGalleryViewModel @Inject constructor(
     }
 
 
-    private fun handleSuccess(dogBreedImages: List<DogBreedImage>) {
+    private suspend fun handleSuccess(dogBreedImages: List<DogBreedImage>) {
         if (dogBreedImages.isEmpty()) {
             updateViewState(BreedGalleryMVIContract.BreedGalleryViewState.NoDogBreedImages)
 

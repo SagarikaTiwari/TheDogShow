@@ -13,6 +13,10 @@ import com.sagarika.features.presentation.ui.base.ViewIntent
 import com.sagarika.features.presentation.ui.base.ViewState
 import com.sagarika.features.presentation.ui.base.mvi
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,8 +29,7 @@ class BreedListViewModel @Inject constructor(
     MVI<ViewState, ViewIntent, SideEffect> by mvi<BreedListMVIContract.BreedListViewState, BreedListMVIContract.BreedListViewIntent, BreedListMVIContract.BreedListSideEffect>(
         BreedListMVIContract.BreedListViewState.Loading
     ) {
-
-    init {
+     init {
         sendIntent(BreedListMVIContract.BreedListViewIntent.LoadData)
     }
 
@@ -38,11 +41,16 @@ class BreedListViewModel @Inject constructor(
 
     private fun showSubBreedGallery(breedName: String, subBreed: String) {
         viewModelScope.launch {
-            emitSideEffect(BreedListMVIContract.BreedListSideEffect.ShowSubBreedGallery(breedName, subBreed))
+            emitSideEffect(
+                BreedListMVIContract.BreedListSideEffect.ShowSubBreedGallery(
+                    breedName,
+                    subBreed
+                )
+            )
         }
     }
 
-     fun sendIntent(intent: BreedListMVIContract.BreedListViewIntent) {
+    fun sendIntent(intent: BreedListMVIContract.BreedListViewIntent) {
         when (intent) {
             is BreedListMVIContract.BreedListViewIntent.LoadData -> fetchBreedList()
             is BreedListMVIContract.BreedListViewIntent.OnBreedClick -> showBreedGallery(intent.breedName)
@@ -54,7 +62,7 @@ class BreedListViewModel @Inject constructor(
     }
 
     private fun fetchBreedList() {
-        viewModelScope.launch {
+           viewModelScope.launch() {
             when (val result = getDogBreeds()) {
                 is Result.Success -> {
                     result.data?.let { handleSuccess(it) }
@@ -63,12 +71,15 @@ class BreedListViewModel @Inject constructor(
                 is Result.Error -> {
                     updateViewState(BreedListMVIContract.BreedListViewState.Error(errorMsg))
                 }
+
+                else -> {}
             }
         }
+
     }
 
 
-    private fun handleSuccess(dogBreeds: List<DogBreed>) {
+    private suspend fun handleSuccess(dogBreeds: List<DogBreed>) {
         if (dogBreeds.isEmpty()) {
             updateViewState(BreedListMVIContract.BreedListViewState.NoDogBreeds)
         } else {
@@ -78,4 +89,4 @@ class BreedListViewModel @Inject constructor(
         }
     }
 
- }
+}

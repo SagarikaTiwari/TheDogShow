@@ -11,6 +11,6 @@ interface MVI<ViewState, ViewIntent, SideEffect> {
     val sideEffect: SharedFlow<SideEffect>
     fun sendIntent(intent: ViewIntent)
 
-    fun updateViewState(viewState: ViewState)
+    suspend fun updateViewState(viewState: ViewState)
     fun CoroutineScope.emitSideEffect(effect: SideEffect)
 }

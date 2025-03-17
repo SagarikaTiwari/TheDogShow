@@ -52,11 +52,11 @@ class BreedListViewModelTest {
             coEvery { dogBreedDomainToDogBreedPresentation.map( FakeData.getBreedListWithSuccess()[0]) } returns FakeData.getMappedBreedList()[0]
             coEvery { dogBreedDomainToDogBreedPresentation.map( FakeData.getBreedListWithSuccess()[1]) } returns FakeData.getMappedBreedList()[1]
 
-            dogBreedViewModel.sendIntent(BreedListViewIntent.LoadData)
+            dogBreedViewModel.sendIntent(BreedListMVIContract.BreedListViewIntent.LoadData)
 
             assertEquals(
                 dogBreedViewModel.viewState.value,
-                BreedListViewState.DogBreeds(FakeData.getMappedBreedList())
+                BreedListMVIContract.BreedListViewState.DogBreeds(FakeData.getMappedBreedList())
             )
         }
 
@@ -69,11 +69,11 @@ class BreedListViewModelTest {
             } returns
                     FakeData.getBreedListWithNoBreeds()
 
-            dogBreedViewModel.sendIntent(BreedListViewIntent.LoadData)
+            dogBreedViewModel.sendIntent(BreedListMVIContract.BreedListViewIntent.LoadData)
 
             assertEquals(
                 dogBreedViewModel.viewState.value,
-                BreedListViewState.NoDogBreeds
+                BreedListMVIContract.BreedListViewState.NoDogBreeds
             )
         }
 
@@ -86,11 +86,11 @@ class BreedListViewModelTest {
                 getDogBreedsUseCase()
             } returns
                     FakeData.getException()
-            dogBreedViewModel.sendIntent(BreedListViewIntent.LoadData)
+            dogBreedViewModel.sendIntent(BreedListMVIContract.BreedListViewIntent.LoadData)
 
             assertEquals(
                 dogBreedViewModel.viewState.value,
-                BreedListViewState.Error(errorMessage = errorMsg)
+                BreedListMVIContract.BreedListViewState.Error(errorMessage = errorMsg)
             )
         }
 

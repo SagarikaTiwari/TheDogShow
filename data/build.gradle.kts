@@ -54,6 +54,7 @@ dependencies {
     implementation(Dependencies.logging_interceptor)
     //DI
     implementation(Dependencies.hilt)
+    testImplementation("junit:junit:4.12")
     kapt(Dependencies.hilt_compiler)
     // Test Dependencies
     testImplementation(TestDependencies.junit)
